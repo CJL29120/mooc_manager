@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>上课咯</title>
+    <header th:replace="header::html"></header>
+
+    <style>
+        .navbar-banner {
+            margin-top: 50px;
+            background: url("/img/homepage-bg.png");
+            background-size: cover;
+            backgtound-repeat: no-repeat;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <navbar th:replace="navbar::html"></navbar>
+
+    <div class="navbar-banner layout-no-margin-top">
+        <div class="banner-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-7">
+                        <a class="container-title">
+                            <img src="img/container-title-2.png"/>
+                        </a>
+                        <div style="margin-top:24px;">
+                            <a id="course-btn" class="course-btn btn btn-lg" href="courses/index.html">进入课程</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+
+                        <form action="/quickregister" method="post">
+                            <div class="form-group">
+                                <input class="form-control" name="name" id="name" type="text" placeholder="昵称">
+                                <div class="help-block text-left"></div>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="email" id="email1" type="email" placeholder="邮箱">
+                                <div class="help-block text-left"></div>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="password" id="password1" type="password" placeholder="密码">
+                                <div class="help-block text-left"></div>
+                            </div>
+                            <button class="btn register" type="submit">加入上课咯</button>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="introduce-container" id="fourFeatures">
+        <div class="container">
+            <div class="row">
+                <!--<div align="center" style="margin-top: 15px" sec:authorize="isAuthenticated()">
+                    <h4 style="color: blue;">
+                        用户名：<span sec:authentication="name"></span>&nbsp&nbsp
+                        ID：<span sec:authentication="principal.id"></span>&nbsp&nbsp
+                        权限：<span sec:authentication="principal.authorities"></span>
+                    </h4>
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" th:value="注销登录">
+                    </form>
+                </div>-->
+                <div class="introduce-unit col-sm-6 col-md-3">
+                    <div><a class="introduce-img"><img src="img/introduceContainer1.gif"/></a></div>
+                    <div><span class="introduce-span">丰富全面的在线课程</span></div>
+                </div>
+                <div class="introduce-unit col-sm-6 col-md-3">
+                    <div><a class="introduce-img"><img src="img/introduceContainer2.gif"/></a></div>
+                    <div><span class="introduce-span">在线视频，高效学习</span></div>
+                </div>
+                <div class="introduce-unit col-sm-6 col-md-3">
+                    <div><a class="introduce-img"><img src="img/introduceContainer3.gif"/></a></div>
+                    <div><span class="introduce-span">每天一个课程，拓展你的学识</span></div>
+                </div>
+                <div class="introduce-unit col-sm-6 col-md-3">
+                    <div><a class="introduce-img"><img src="img/introduceContainer4.gif"/></a></div>
+                    <div><span class="introduce-span">有效学习时间，真实记录你的学习</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="line-and-laboratory">
+        <div class="container">
+            <div class="clearfix text-center item-header">
+                <span class="line"></span>
+                <span class="text-center item-title">推荐学习</span>
+                <span class="line"></span>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane clearfix active" id="study-line">
+
+                    <div class="col-xs-12 col-sm-6 col-md-4">
+                        <a href="paths/show.html">
+                            <div class="path-item">
+                                <div class="col-xs-5 col-sm-4 path-img">
+                                    <img src="img/1471513730333.png">
+                                </div>
+                                <div class="col-xs-7 col-sm-8">
+                                    <div class="path-name">新手入门</div>
+                                    <div class="path-course-num">
+                                        </span>6</span>
+                                        门课程
+                                    </div>
+                                </div>
+                                <div class="desc-layer">
+                                    <div class="center">新手入门路径帮助对 IT 技术感兴趣的新手0基础入门计算机编程。本路径通过新手入门、Linux 及
+                                        Vim课程熟悉实验楼的实践学习环境，再以 C 语言和一个简单的项目引导你一步步进入计算机技术的殿堂。
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="line-and-laboratory">
+        <div class="container">
+            <div class="clearfix text-center item-header">
+                <span class="line"></span>
+                <div class="text-center item-title">积分课程</div>
+                <span class="line"></span>
+            </div>
+            <div class="clearfix courses">
+
+                <div class="col-md-3 col-sm-6  course">
+                    <a class="course-box" href="courses/show.html">
+                        <div class="sign-box">
+                            <i class="fa fa-star-o course-follow pull-right"
+                               data-follow-url="/courses/11/follow"
+                               data-unfollow-url="/courses/11/unfollow" style="display:none"></i>
+                        </div>
+                        <div class="course-img">
+
+                            <img alt="Go语言编程" src="img/ncn11.jpg">
+
+                        </div>
+
+                        <div class="course-body">
+                            <span class="course-title" data-toggle="tooltip" data-placement="bottom"
+                                  title="Go语言编程">Go语言编程</span>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-per-num pull-left">
+                                <i class="fa fa-users"></i>
+
+                                5741
+                            </span>
+                        </div>
+                    </a>
+                </div>
+
+
+            </div>
+            <div class="clearfix item-footer">
+                <div class="pull-right watch-all">
+                    <a href="courses/index.html">查看更多 ></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="base-data"
+         data-flash="false"
+         data-is-login=false
+         data-is-jwt=true
+         data-id=""
+         data-username=""
+         data-msg-system="">
+    </div>
+
+
+    <footer th:replace="footer::html"></footer>
+
+    <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
+    <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
+</body>
+</html>

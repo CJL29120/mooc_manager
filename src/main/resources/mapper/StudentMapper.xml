@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mooc_manager.dao.StudentDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.chen.mooc_manager.model.Student">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="nickname" property="nickname" />
+        <result column="password" property="password" />
+        <result column="gender" property="gender" />
+        <result column="avatar_url" property="avatarUrl" />
+        <result column="email" property="email" />
+        <result column="mobile" property="mobile" />
+        <result column="status" property="status" />
+        <result column="birthday" property="birthday" />
+        <result column="education" property="education" />
+        <result column="college_name" property="collegeName" />
+        <result column="major" property="major" />
+        <result column="sign" property="sign" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="ip" property="ip" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, username, nickname, password, gender, avatar_url, email, mobile, status, birthday, education, college_name, major, sign, province, city, ip, create_time, update_time, deleted
+    </sql>
+
+</mapper>

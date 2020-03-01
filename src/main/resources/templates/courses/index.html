@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>上课咯</title>
+    <header th:replace="header::html"></header>
+</head>
+
+<body>
+
+    <navbar th:replace="navbar::html"></navbar>
+
+    <div class="container layout layout-margin-top">
+
+
+        <div class="row">
+            <div class="col-md-9 layout-body">
+
+                <div class="content">
+                    <div class="row course-cates">
+                        <div class="col-md-1 course-cates-title">类别：</div>
+                        <div class="col-md-11 course-cates-content">
+                            <a class="active" href="/courses/?course_type=all&amp;tag=all">全部</a>
+                            <a class="" href="/courses/?course_type=all&amp;tag=all&amp;fee=free">免费</a>
+                            <a class="" href="/courses/?course_type=all&amp;tag=all&amp;fee=limited">限免</a>
+                            <div class="course-cates-vip ">
+                                <a target="_blank" href="/vip"><img src="/img/vip-icon.png"></a>
+                                <a class="" href="/courses/?course_type=all&amp;tag=all&amp;fee=member">积分</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row course-cates">
+                        <div class="col-md-1 course-cates-title">标签：</div>
+                        <div class="col-md-11 course-cates-content">
+                            <a class="active" href="/courses/?course_type=all&amp;fee=all">全部</a>
+
+                            <a class="" href="/courses/?course_type=all&amp;tag=Python&amp;fee=all">哲学</a>
+
+                            <a class="" href="/courses/?course_type=all&amp;tag=C%2FC%2B%2B&amp;fee=all">经济学</a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="content position-relative">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="active"><a href="/courses/?course_type=all&amp;tag=all&amp;fee=all">已上线</a></li>
+                        <li class=""><a href="/courses/?status=preview" class="stat-event"
+                                        data-stat="preview_course">即将上线</a></li>
+                    </ul>
+                    <div class="clearfix"></div>
+                    <div class="courses-sort">
+                        <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;order=latest">最新</a>
+                        /
+                        <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;order=hotest">最热</a>
+                    </div>
+                    <div class="search-result"></div>
+
+                    <div class="row">
+                        <div th:each="course,courseStat:${courses}">
+                            <div class="col-md-4 col-sm-6  course">
+                                <a class="course-box" href="courses/show">
+                                    <div class="sign-box">
+                                        <i class="fa fa-star-o course-follow pull-right"
+                                           data-follow-url="/courses/63/follow"
+                                           data-unfollow-url="/courses/63/unfollow" style="display:none"></i>
+                                    </div>
+                                    <div class="course-img">
+
+                                        <img alt="新手指南之玩转实验楼" src="https://dn-simplecloud.shiyanlou.com/ncn63.jpg">
+
+                                    </div>
+                                    <div class="course-body">
+                                        <span class="course-title" data-toggle="tooltip" data-placement="bottom"
+                                              th:text="${course.name}">新手指南之玩转实验楼</span>
+                                    </div>
+                                    <div class="course-footer">
+                                        <span class="course-per-num pull-left">
+                                            <i class="fa fa-users"></i>
+                                            <span th:text="${course.studyCount}"></span>
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
+                         </div>
+                    </div>
+
+
+                    <nav class="pagination-container">
+                        <ul class="pagination">
+
+                            <li class="disabled">
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">上一页</span>
+                                </a>
+                            </li>
+
+                            <li class="active">
+                                <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=1">1</a>
+                            </li>
+
+                            <li class="">
+                                <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=2">2</a>
+                            </li>
+
+                            <li>
+                                <a href='#'>...</a>
+                            </li>
+
+                            <li class="">
+                                <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=24">24</a>
+                            </li>
+
+                            <li class="">
+                                <a aria-label="Next" href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=2">
+                                    <span aria-hidden="true">下一页</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-3 layout-side">
+
+                <div class="panel panel-default panel-userinfo">
+                    <div class="panel-body body-userinfo">
+                        <div class="media userinfo-header">
+                            <div class="media-left">
+                                <div class="user-avatar">
+
+                                    <a class="avatar" href="#sign-modal" data-toggle="modal" data-sign="signin">
+                                        <img class="circle" src="../img/logo-grey.png">
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="media-body">
+
+                                <span class="media-heading username">欢迎来到上课咯</span>
+                                <p class="vip-remain">看视频，学知识</p>
+
+                            </div>
+                        </div>
+
+                        <div class="row userinfo-data">
+
+                            <hr>
+                            <div class="btn-group-lr">
+                                <a href="#sign-modal" type="button" class="btn btn-success col-md-5 col-xs-6 login-btn"
+                                   data-toggle="modal" data-sign="signin" style="margin: auto">你好，XXX</a>
+                                <br/><br/><br/>
+                                <a href="#sign-modal" type="button" class="btn btn-success col-md-5 col-xs-6 login-btn"
+                                   data-toggle="modal" data-sign="signup">收藏夹</a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="sidebox">
+
+                    <div class="sidebox-header">
+                        <h4 class="sidebox-title">最热路径</h4>
+                    </div>
+                    <div class="sidebox-body course-content side-list-body">
+                        <a href="/paths/python"><img style="width:25px;height:25px" src="../img/1471513769430.png"> Python
+                            研发工程师</a>
+                    </div>
+
+                </div>
+
+                <div class="side-image side-qrcode">
+                    <img src="../img/ShiyanlouQRCode.png">
+                    <div class="side-image-text">关注公众号，手机看教程</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="base-data"
+         data-flash="false"
+         data-is-login=false
+         data-is-jwt=true
+         data-msg-user=""
+         data-msg-system=""
+    ></div>
+
+    <footer th:replace="footer::html"></footer>
+
+    <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
+    <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
+
+</body>
+</html>
