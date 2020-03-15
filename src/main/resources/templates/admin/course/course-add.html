@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>创建课程信息</title>
     <header th:replace="/admin/header::html"></header>
+    <link rel="stylesheet"  th:href="@{/js/upload-js/style.css}"/>
   </head>
   
   <body>
@@ -87,25 +88,27 @@
                  </div>
              </div>
 
+             <div id="container" class="layui-form-item">
+                 <label for="upload-pc" class="layui-form-label">
+                     课程封面:
+                 </label>
+
+                 <img class="layui-upload-img" id="upload-pc" width="200" >
+                 <pre id="console"></pre>
+             </div>
+
+             <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+             <br/>
+
              <div class="layui-form-item">
-                 <div class="layui-upload">
-                     <button type="button" class="layui-btn" id="upload">上传图片</button>
-                     <div class="layui-upload-list">
-                         <img class="layui-upload-img" id="upload-pc" width="200">
-                         <p id="upload-text"></p>
-                     </div>
+                 <label for="upload" class="layui-form-label">
+                 </label>
+                 <div id="upload">
+                     <a id="selectfiles" href="javascript:void(0);" class='btn'>选择文件</a>
+                     <a id="postfiles" href="javascript:void(0);" class='btn'>开始上传</a>
                  </div>
              </div>
 
-<!--             <div class="layui-form-item">
-                 <label for="C_cover" class="layui-form-label">
-                     <span class="x-red">*</span>课程封面（上传图片）
-                 </label>
-                 <div class="layui-input-inline">
-                     <input type="text" id="C_cover"  name="coverUrl" lay-verify="required" autocomplete="off" class="layui-input">
-                 </div>
-                 </div>
--->
 
              <div class="layui-form-item">
                   <button  class="layui-btn" lay-filter="add" lay-submit="">
@@ -116,6 +119,8 @@
          </form>
      </div>
 
+     <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
      <script>
 
       layui.use(['form','layer','upload', 'laydate'], function(){
@@ -123,46 +128,14 @@
           var form = layui.form
           ,layer = layui.layer
           ,laydate = layui.laydate
-          ,$ = layui.jquery
-          ,upload = layui.upload;
+          ,$ = layui.jquery;
+
           //日期
           laydate.render({
               elem: '#C_end'
               ,format: 'yyyy-MM-dd' //可任意组合
           });
-          //普通图片上传
-          var uploadInst = upload.render({
-              elem: '#upload'
-              , url: '/upload/pictureUpload' //改成您自己的上传接口
-              ,method:'post'
-              ,accept:'images'
-              ,acceptMime:'image/*'
-              ,field:'projectImg'
-/*              , before: function (obj) {
-                  //预读本地文件示例，不支持ie8
-                  obj.preview(function (index, file, result) {
-                      $('#upload-pc').attr('src', result); //图片链接（base64）
-                  });
-              }*/
-              , done: function (res) {
-                  //如果上传失败
-                  if (res.code !== 200) {
-                      return layer.msg('上传失败');
-                  }
-                  //上传成功
-                  console.log(res);
-                  $('#upload-pc').attr('src', res.data);
-              }
-              , error: function () {
-                  //演示失败状态，并实现重传
-                  var text = $('#upload-text');
-                  text.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                  text.find('.demo-reload').on('click', function () {
-                      uploadInst.upload();
-                  });
-              }
-          });
-      
+
             //自定义验证规则
             form.verify({
               name: function(value){
@@ -182,8 +155,7 @@
 
           //监听提交
             form.on('submit(add)', function(data){
-                data.field.coverUrl = $('#upload-pc').attr('src');
-                console.log(data.field);
+                data.field.coverUrl = host+"/"+get_uploaded_object_name();
                 data.field.verifyId=[[${verify.id}]];
                 $.ajax({
                     url:"/course/add",
