@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.mooc_manager.dao.CourseDao;
 import com.chen.mooc_manager.model.Course;
 import com.chen.mooc_manager.service.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,5 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements CourseService {
 
+    @Autowired
+    CourseDao courseDao;
 
+    @Override
+    public List<Course> getAllCoursesByPage(Integer startPosition,Integer limit) {
+        return courseDao.getAllCoursesByPage(startPosition, limit);
+    }
 }

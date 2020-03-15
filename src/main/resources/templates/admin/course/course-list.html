@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Friday-System</title>
+        <header th:replace="/admin/header::html"></header>
+
+        <style>
+            .layui-table-cell{
+                height: auto!important;
+                white-space: normal;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">课程管理</a>
+            <a>
+                <cite>课程列表</cite></a>
+          </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+                <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+        </div>
+
+        <div class="layui-fluid">
+            <div class="layui-row  layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+
+                        <div class="layui-card-body ">
+                            <table class="layui-hide" id="table" lay-filter="member"></table>
+                        </div>
+
+                        <div class="layui-card-body ">
+                            <script type="text/html" id="barDemo">
+                                <a class="layui-btn layui-btn-xs" lay-event="courseEdit" >编辑课程</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-inline" lay-event="delete">
+            <i class="layui-icon layui-icon-delete"></i>
+        </div>
+    </script>
+    <script>
+        layui.use(['table'], function(){
+            var table = layui.table;
+            table.render({
+                elem: '#table'
+                ,url: '/course/list' //数据接口
+                ,page: true //开启分页
+                ,toolbar: '#toolbarDemo'
+                ,response: {
+                    countName: 'count', //规定数据总数的字段名称，默认：count
+                    dataName: 'datas' //规定数据列表的字段名称，默认：data
+                }
+                ,cols: [
+                    [ //表头
+                        {type: 'checkbox', fixed: 'left' ,width:80 ,align:'center'}
+                        ,{field: 'name', title: '课程', width: 100}
+                        ,{field: 'coverUrl',  title: '封面' ,templet:'<div style=""><img width="150" src="{{ d.coverUrl}}"></div>' ,width:160}
+                        ,{field: 'sectionCount', title: '章节数'   ,width: 100}
+                        ,{field: 'classifyName', title: '分类' ,hide:'true'  ,width: 100}
+                        ,{field: 'type', title: '类型'         ,hide:'true' ,width: 100}
+                        ,{field: 'price', title: '积分'        ,hide:'true' ,width: 100}
+                        ,{field: 'direction', title: '适合人群' ,hide:'true'  ,width: 100}
+                        ,{field: 'isFinished', title: '是否完成'   ,width: 100}
+                        ,{field: 'isOnline', title: '是否上架'  ,hide:'true' ,width: 100}
+                        ,{field: 'finishedCount', title: '完成章节' ,hide:'true'  ,width: 100}
+                        ,{field: 'followerCount', title: '关注人数'   ,width: 100}
+                        ,{field: 'studyCount', title: '学习人数'   ,width: 100}
+                        ,{field: 'shortIntro', title: '短述'     ,hide:'true' }
+                        ,{title: '操作', fixed: 'right', width: 180, align:'center', toolbar: '#barDemo'}
+                    ]
+                ]
+            });
+
+            //监听工具条
+            table.on('tool(member)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'courseEdit'){
+                    xadmin.open('编辑课程','/course/edit/?id='+data.id);
+                }
+            });
+
+            table.on('toolbar(member)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id)
+                    ,data = checkStatus.data; //获取选中的数据
+                console.log(data);
+                switch(obj.event){
+                    case 'delete':
+                        if(data.length === 0){
+                            layer.msg('请选择一行');
+                        } else {
+                            layer.confirm('真的删除吗',function f() {
+                                var ids = new Array(data.length);
+                                for(var j = 0; j < data.length ; j++) {
+                                    ids[j] = data[j].id;
+                                }
+                                $.ajax({
+                                    url:"/course/deleteBatch",
+                                    type:"POST",
+                                    data:{ids:ids},
+                                    dataType:'json',
+                                    success:function(result){
+                                        layer.ready(function () {
+                                            layer.msg("删除成功", {icon: 1});
+                                            table.reload('table');
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                        break;
+                }
+            });
+        });
+    </script>
+
+</html>

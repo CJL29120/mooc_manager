@@ -1,0 +1,8 @@
+
+ALIYUNCALLBACKHOST: http://mq30112266.qicp.vip
+myconfig.aliyun:
+  accessId: 'LTAI4FiF1Gi1woLjfi37w2uS'
+  accessKey: '6TeNKz0Cl3szWUM7F1XRdFXjNE1KLW'
+  endpoint: 'oss-cn-shenzhen.aliyuncs.com'
+  bucket: 'mooc-manager'
+  callbackUrl: ${ALIYUNCALLBACKHOST}/upload/uploadCallback

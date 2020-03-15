@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <title> 上课咯</title>
     <header th:replace="header::html"></header>
+
+    <style>
+        .jumpDiv{
+
+        }
+    </style>
 </head>
 
 <body>
@@ -107,34 +113,25 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="labs">
 
-                            <div class="lab-item ">
-                                <div class="lab-item-status">
-
-                                    <img src="/img/lab-not-ok.png">
-
-                                </div>
-                                <div class="lab-item-index">第0节</div>
-                                <div class="lab-item-title" data-toggle="tooltip" data-placement="bottom"
-                                     title="Linux 系统简介">简介</div>
-                                <div class="pull-right lab-item-ctrl">
-
-                                    <a class="btn btn-default" href="#sign-modal" data-toggle="modal" data-sign="signin"
-                                       data-next="/courses/1">查看文档</a>
-                                    <a class="btn btn-primary" href="#sign-modal" data-toggle="modal" data-sign="signin"
-                                       data-next="/courses/1">开始实验</a>
-
-                                </div>
-                            </div>
-
 
                             <div class="lab-item " th:each="section:${course.sections}">
+
+                                <div class="jumpDiv" th:data-bind="${section.sort}"> </div>
                                 <div class="lab-item-status">
                                     <img src="/img/lab-not-ok.png">
                                 </div>
                                 <div class="lab-item-index" th:text="${section.sort}">第2节</div>
                                 <div class="lab-item-title" data-toggle="tooltip" data-placement="bottom"
                                      th:text="${section.name}">基本概念及操作</div>
-                                <div class="pull-right lab-item-ctrl"></div>
+
+                                <div class="pull-right lab-item-ctrl">
+
+                                    <a class="btn btn-default" href="#sign-modal" data-toggle="modal" data-sign="signin"
+                                       data-next="/courses/1">查看文档</a>
+                                    <a class="btn btn-primary" th:href="@{'/courses/study?courseId='+${section.courseId}+'&'+'sectionId='+${section.id}}" data-toggle="modal" data-sign="signin"
+                                       data-next="/courses/1">开始学习</a>
+
+                                </div>
                             </div>
 
                     </div>
@@ -490,6 +487,13 @@
 
     <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
+    <script type="text/javascript">
+        $(".jumpDiv").click(function (e,ui) {
+            var sort = $(this).attr("data-bind");
+            console.log(sort);
+            // window.location.hrefc = ;
+        });
 
+    </script>
 </body>
 </html>

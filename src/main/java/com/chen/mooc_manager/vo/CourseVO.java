@@ -1,4 +1,4 @@
-package com.chen.mooc_manager.dto;
+package com.chen.mooc_manager.vo;
 
 import com.chen.mooc_manager.model.Course;
 import com.chen.mooc_manager.model.CourseComment;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @ToString(callSuper = true)
-public class CourseDTO extends Course {
+public class CourseVO extends Course {
     private List<CourseSection> sections;
     private List<CourseComment> comments;
     private Teacher creator;

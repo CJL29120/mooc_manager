@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>创建课程信息</title>
+    <link rel="stylesheet"  th:href="@{/js/upload-js/style.css}"/>
+    <header th:replace="/admin/header::html"></header>
+  </head>
+  
+  <body>
+     <div class="x-body">
+         <form class="layui-form">
+
+<!--
+             <div class="layui-form-item">
+                 <label for="upload" class="layui-form-label">
+                     <span class="x-red">*</span>课程封面(图片一旦上传成功，旧图片将被覆盖，请三思)
+                 </label>
+                 <div class="layui-upload">
+                     <button type="button" class="layui-btn" id="upload">上传图片</button>
+                     <div class="layui-upload-list">
+                         <img class="layui-upload-img" id="upload-pc" width="200" th:src="${course.coverUrl}">
+                         <p id="upload-text"></p>
+                     </div>
+                 </div>
+             </div>
+-->
+
+
+             <h4>您所选择的文件列表：</h4>
+             <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+
+             <br/>
+
+
+             <div id="container" class="layui-form-item">
+                 <label for="upload-pc" class="layui-form-label">
+                     课程封面:
+                 </label>
+
+                 <img class="layui-upload-img" id="upload-pc" width="200">
+                 <pre id="console"></pre>
+             </div>
+
+             <div class="layui-form-item">
+                 <label for="upload" class="layui-form-label">
+                 </label>
+                 <div id="upload">
+                     <a id="selectfiles" href="javascript:void(0);" class='btn'>选择文件</a>
+                     <a id="postfiles" href="javascript:void(0);" class='btn'>开始上传</a>
+                 </div>
+             </div>
+
+             <div class="layui-form-item">
+                 <button  class="layui-btn" lay-filter="add" lay-submit="">
+                     创建
+                 </button>
+             </div>
+
+         </form>
+     </div>
+
+     <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
+
+     <script>
+      layui.use(['form','layer', 'laydate'], function(){
+
+          var form = layui.form
+          ,layer = layui.layer
+          ,laydate = layui.laydate
+          ,$ = layui.jquery;
+          //日期
+          laydate.render({
+              elem: '#C_end'
+              ,format: 'yyyy-MM-dd' //可任意组合
+          });
+
+          form.on('submit(add)', function(data){
+              data.field.coverUrl = $('#upload-pc').attr('src');
+
+              $("#console").text(host+"/"+get_uploaded_object_name())
+
+              return false;
+          });
+      });
+     </script>
+  </body>
+</html>

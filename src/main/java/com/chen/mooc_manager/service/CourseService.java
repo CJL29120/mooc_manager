@@ -2,6 +2,9 @@ package com.chen.mooc_manager.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.mooc_manager.model.Course;
+import com.chen.mooc_manager.model.Student;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.chen.mooc_manager.model.Course;
  */
 public interface CourseService extends IService<Course> {
 
+    List<Course> getAllCoursesByPage(Integer startPosition,Integer limit);
 }

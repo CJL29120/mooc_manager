@@ -27,15 +27,12 @@ public class CourseComment extends Model<CourseComment> {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    private String username;
+    private String nickname;
     private String toUsername;
     private Integer courseId;
     private Integer sectionId;
-    private String sectionTitle;
     private String content;
-    private Integer refId;
-    private String refContent;
-    private Integer type;
+    private Integer ctcId;
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;

@@ -29,7 +29,8 @@ public class CourseSection extends Model<CourseSection> {
     private String name;
     private Integer sort;
     private Integer duration;
-    private Boolean isOnline;
+    private String videoUrl;
+    private Boolean status;
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;

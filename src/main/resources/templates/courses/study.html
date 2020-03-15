@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+
+    <header th:replace="header::html"></header>
+
+<body>
+
+    <navbar th:replace="navbar::html"></navbar>
+
+    <div class="container  layout layout-margin-top">
+
+    <div class="row">
+        <div class="col-md-9 layout-body">
+            <div class="content">
+                <ul class="nav nav-tabs" role="tablist">
+
+                    <li role="presentation" class="active" style="margin: auto;">
+                        <a href="#" aria-controls="labs" role="tab" data-toggle="tab" style="margin: auto;"
+                        data-th-text="${section.name}" >VIdeo</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+
+                    <!-- <video width="780" controls>
+                          <source src="https://www.runoob.com/try/demo_source/mov_bbb.mp4" type="video/mp4">
+                          <source src="https://www.runoob.com/try/demo_source/mov_bbb.mp4" type="video/ogg">
+
+                    </video> -->
+                    <video
+                        id="my-player"
+                        class="video-js"
+                        controls
+                        preload="auto"
+                        poster="../img/ncn1.jpg"
+                        width="780"
+                        height="400"
+                        data-setup='{}'>
+                        <source data-th-src="${section.videoUrl}" type="video/mp4"></source>
+                        <source data-th-src="${section.videoUrl}" type="video/webm"></source>
+                        <source data-th-src="${section.videoUrl}" type="video/ogg"></source>
+
+                        <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a
+                        web browser that
+                        <a href="https://videojs.com/html5-video-support/" target="_blank">
+                          supports HTML5 video
+                        </a>
+                        </p>
+                    </video>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3 layout-side">
+
+            <div class="side-image side-image-pc">
+                <img src="../img/ncn1.jpg?imageView2/0/h/300">
+            </div>
+
+            <div class="sidebox adv-course">
+                <div class="sidebox-header">
+                    <h4 class="sidebox-title">评论</h4>
+                </div>
+                <div class="sideobx-body course-content pre-scrollable" style=" height:269px; overflow:auto">
+                    <li>awsl</li>
+                    <li>nice</li>
+                    <li>刘海都是</li>
+                    <li>awsl</li>
+                    <li>nice</li>
+                    <li>刘海都是</li>
+                    <li>awsl</li>
+                    <li>nice</li>
+                    <li>刘海都是</li>
+                    <li>awsl</li>
+                    <li>nice</li>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+
+
+
+    <footer th:replace="footer::html"></footer>
+    <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
+    <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
+</body>
+</html>

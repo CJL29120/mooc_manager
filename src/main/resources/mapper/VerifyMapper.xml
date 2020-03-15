@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mooc_manager.dao.VerifyDao">
+  <resultMap id="BaseResultMap" type="com.chen.mooc_manager.model.Verify">
+    <id column="id"  property="id" />
+    <result column="name"  property="name" />
+    <result column="creator_id"  property="creatorId" />
+    <result column="status"  property="status" />
+    <result column="short_intro"  property="shortIntro" />
+    <result column="section_count"  property="sectionCount" />
+    <result column="end_time"  property="endTime" />
+    <result column="create_time"  property="createTime" />
+    <result column="update_time"  property="updateTime" />
+    <result column="deleted"  property="deleted" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, name, creator_id, status, short_intro, section_count, end_time, create_time,
+    update_time, deleted
+  </sql>
+
+  <insert id="save" parameterType="com.chen.mooc_manager.model.Verify" useGeneratedKeys="true" keyProperty="id">
+    insert into verify(id, name, creator_id, status, short_intro, section_count, end_time, create_time, deleted)
+
+    values(
+          #{id},
+
+          <if test="name != null">#{name},</if>
+          <if test="name == null">"",</if>
+
+          <if test="creatorId != null">#{creatorId},</if>
+          <if test="creatorId == null">-1,</if>
+
+          <if test="status != null">#{status},</if>
+          <if test="status == null">0,</if>
+
+          <if test="shortIntro != null">#{shortIntro},</if>
+          <if test="shortIntro == null">"",</if>
+
+          <if test="sectionCount != null">#{sectionCount},</if>
+          <if test="sectionCount == null">0,</if>
+
+          <if test="endTime != null">#{endTime},</if>
+          <if test="endTime == null">CURRENT_DATE ,</if>
+          <if test="createTime != null">#{createTime},</if>
+          <if test="createTime == null">CURRENT_DATE ,</if>
+
+          <if test="deleted != null">#{deleted}</if>
+          <if test="deleted == null">0</if>
+    )
+  </insert>
+
+</mapper>

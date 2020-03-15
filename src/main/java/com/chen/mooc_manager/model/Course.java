@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,7 +30,7 @@ public class Course extends Model<Course> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String name;
-    private String type;
+    private Integer type;
     private String classifyId;
     private String classifyName;
     private String shortIntro;
@@ -47,6 +48,8 @@ public class Course extends Model<Course> {
     private Integer finishedCount;
     private Integer followerCount;
     private Integer studyCount;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date endTime;
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @since 2020-02-29
  */
 @Controller
-@RequestMapping("/test")
 public class ATestController {
 
     @Autowired
@@ -35,6 +34,16 @@ public class ATestController {
         JSONArray array =new JSONArray();
 
         return JSON.toJSONString(service.list(wrapper));
+    }
+
+    @RequestMapping("/admin")
+    String admin(){
+        return "admin/index";
+    }
+
+    @RequestMapping("/list")
+    String list(){
+        return "admin/student/student-list";
     }
 
 }

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>创建课程信息</title>
+    <header th:replace="/admin/header::html"></header>
+    <link rel="stylesheet"  th:href="@{/js/upload-js/style.css}"/>
+  </head>
+  
+  <body>
+     <div class="x-body">
+         <form class="layui-form">
+
+            <div class="layui-form-item">
+              <label for="C_name" class="layui-form-label">
+                  <span class="x-red">*</span>课程名
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="C_name" th:value="${course.name}" name="name" lay-verify="required" autocomplete="off" class="layui-input">
+              </div>
+             </div>
+
+             <div class="layui-form-item">
+                 <label for="C_section" class="layui-form-label">
+                     <span class="x-red">*</span>章节数
+                 </label>
+                 <div class="layui-input-inline">
+                     <input type="text" id="C_section" th:value="${course.sectionCount}"  name="sectionCount" lay-verify="required" autocomplete="off" class="layui-input">
+                 </div>
+             </div>
+
+             <div class="layui-form-item">
+                 <label class="layui-form-label">
+                     <span class="x-red">*</span>课程类型
+                 </label>
+                 <div class="layui-input-inline">
+                     <input type="radio" th:checked="${course.type==0}" name="type" value="0" title="免费">
+                     <input type="radio" th:checked="${course.type==1}" name="type" value="1" title="限免">
+                     <input type="radio" th:checked="${course.type==2}" name="type" value="2" title="积分">
+                 </div>
+
+
+                 <div class="layui-form-item layui-hide">
+                     <label for="C_price" class="layui-form-label">
+                         <span class="x-red">*</span>积分（类型选择了积分就显示）
+                     </label>
+                     <div class="layui-input-inline" >
+                         <input class="layui-input" type="text" id="C_price" th:value="${course.price}"  name="price" autocomplete="off" >
+                     </div>
+                     <div class="layui-input-inline" >
+                         <input class="layui-input" type="text" id="C_id" th:value="${course.id}"  name="id" autocomplete="off" >
+                     </div><div class="layui-input-inline" >
+                     <input class="layui-input" type="text" id="C_classifyName" th:value="${course.classifyName}"  name="classifyName" autocomplete="off" >
+                 </div>
+                 </div>
+
+                 <label for="C_classify" class="layui-form-label">
+                     <span class="x-red">*</span>课程分类 //从数据库分类表取出所有
+                 </label>
+                 <div class="layui-input-inline">
+                     <select  id="C_classify" lay-filter="classifyId"  name="classifyId">
+                         <option value=""></option>
+                         <option value="0">金融</option>
+                         <option value="1" selected="">艺术</option>
+                         <option value="2">哲学</option>
+                     </select>
+                 </div>
+<!--
+                 <div class="layui-input-inline">
+                     <select  th:each="classify,classifyStat:${classifys}" id="C_classify" lay-filter="classifyId"  name="classifyId">
+                         <option th:selected="${course.classifyId==classify.id}" th:value="${classify.id}" th:text="${classify.name}"></option>
+                     </select>
+                 </div>
+-->
+             </div>
+
+             <div class="layui-form-item">
+                 <label for="C_direction" class="layui-form-label">
+                     适合人群
+                 </label>
+                 <div class="layui-input-inline">
+                     <input type="text" id="C_direction" th:value="${course.direction}"  name="direction" lay-verify="required" autocomplete="off" class="layui-input">
+                 </div>
+             </div>
+
+             <div class="layui-form-item layui-form-text">
+                 <label for="C_shortIntro" class="layui-form-label">
+                     课程短述
+                 </label>
+                 <div class="layui-input-block">
+                     <textarea class="layui-textarea" th:value="${course.shortIntro}" th:text="${course.shortIntro}" id="C_shortIntro"  name="shortIntro" lay-verify="required" placeholder="请输入内容" ></textarea>
+                 </div>
+             </div>
+
+<!--
+             <div class="layui-form-item">
+                 <label for="upload" class="layui-form-label">
+                     <span class="x-red">*</span>课程封面(图片一旦上传成功，旧图片将被覆盖，请三思)
+                 </label>
+                 <div class="layui-upload">
+                     <button type="button" class="layui-btn" id="upload">上传图片</button>
+                     <div class="layui-upload-list">
+                         <img class="layui-upload-img" id="upload-pc" width="200" th:src="${course.coverUrl}">
+                         <p id="upload-text"></p>
+                     </div>
+                 </div>
+             </div>
+-->
+
+
+
+
+             <div id="container" class="layui-form-item">
+                 <label for="upload-pc" class="layui-form-label">
+                     课程封面:
+                 </label>
+
+                 <img class="layui-upload-img" id="upload-pc" width="200" th:src="${course.coverUrl}">
+                 <pre id="console"></pre>
+             </div>
+
+             <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+             <br/>
+
+             <div class="layui-form-item">
+                 <label for="upload" class="layui-form-label">
+                 </label>
+                 <div id="upload">
+                     <a id="selectfiles" href="javascript:void(0);" class='btn'>选择文件</a>
+                     <a id="postfiles" href="javascript:void(0);" class='btn'>开始上传</a>
+                 </div>
+             </div>
+
+
+             <div class="layui-form-item">
+                  <button  class="layui-btn" lay-filter="add" lay-submit="">
+                    创建
+                  </button>
+            </div>
+
+         </form>
+     </div>
+     <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
+     <script>
+
+      layui.use(['form','layer','upload', 'laydate'], function(){
+
+          var form = layui.form
+          ,layer = layui.layer
+          ,laydate = layui.laydate
+          ,$ = layui.jquery
+          ,upload = layui.upload;
+          //日期
+          laydate.render({
+              elem: '#C_end'
+              ,format: 'yyyy-MM-dd' //可任意组合
+          });
+
+
+          /*//普通图片上传
+          var uploadInst = upload.render({
+              elem: '#upload'
+              , url: '/upload/pictureUpload' //改成您自己的上传接口
+              ,method:'post'
+              ,accept:'images'
+              ,acceptMime:'image/!*'
+              ,field:'projectImg'
+/!*              , before: function (obj) {
+                  //预读本地文件示例，不支持ie8
+                  obj.preview(function (index, file, result) {
+                      $('#upload-pc').attr('src', result); //图片链接（base64）
+                  });
+              }*!/
+              , done: function (res) {
+                  //如果上传失败
+                  if (res.code !== 200) {
+                      return layer.msg('上传失败');
+                  }
+                  //上传成功
+                  console.log(res);
+                  $('#upload-pc').attr('src', res.data);
+              }
+              , error: function () {
+                  //演示失败状态，并实现重传
+                  var text = $('#upload-text');
+                  text.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                  text.find('.demo-reload').on('click', function () {
+                      uploadInst.upload();
+                  });
+              }
+          });*/
+      
+            //自定义验证规则
+            form.verify({
+              name: function(value){
+                if(value.length < 5){
+                  return '昵称至少得5个字符啊';
+                }
+              }
+              ,telephone: [/(.+){6,12}$/, '电话号码必须6到12位']
+              ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+              ,repass: function(value){
+                  if($('#L_pass').val()!=$('#L_repass').val()){
+                    return '两次密码不一致';
+                  }
+              }
+            });
+
+
+          //监听提交
+            form.on('submit(add)', function(data){
+                data.field.coverUrl = host+"/"+get_uploaded_object_name();
+
+
+                $.ajax({
+                    url:"/course/edit",
+                    type:"POST",
+                    data:data.field,
+                    dataType:'json',
+                    success:function(result){
+                        if(result.code == 500 || result.code == 5000100 || result.code == 5000101 || result.code == 5000102){
+                            layer.alert(result.msg);
+                        }else{
+                            layer.ready(function () {
+                                layer.msg("创建成功", {icon: 6});
+                                //关闭当前frame
+                                xadmin.close();
+                                // 可以对父窗口进行刷新
+                                xadmin.father_reload();
+                            });
+                        }
+                    },
+                    error:function (result) {
+                            layer.alert(result);
+                    }
+                });
+              return false;
+            });
+
+      });
+  </script>
+  </body>
+</html>
