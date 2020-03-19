@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.mooc_manager.dao.VerifyDao;
 import com.chen.mooc_manager.model.Verify;
 import com.chen.mooc_manager.service.VerifyService;
+import com.chen.mooc_manager.util.ParamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,12 @@ public class VerifyServiceImpl extends ServiceImpl<VerifyDao, Verify> implements
     @Autowired
     VerifyDao verifyDao;
 
+    @Autowired
+    ParamUtil<Verify> paramUtil;
+
     @Override
     public boolean save(Verify entity) {
+        entity = paramUtil.afterTrim(entity);
         return verifyDao.save(entity);
     }
 

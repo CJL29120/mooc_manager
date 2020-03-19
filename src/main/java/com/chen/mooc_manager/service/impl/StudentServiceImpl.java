@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.mooc_manager.dao.StudentDao;
 import com.chen.mooc_manager.model.Student;
 import com.chen.mooc_manager.service.StudentService;
+import com.chen.mooc_manager.util.ParamUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,12 @@ public class StudentServiceImpl extends ServiceImpl<StudentDao, Student> impleme
     @Autowired
     StudentDao studentDao;
 
+    @Autowired
+    ParamUtil<Student> paramUtil;
+
     @Override
     public boolean save(Student entity) {
+        entity = paramUtil.afterTrim(entity);
         Assert.isNull(studentDao.selectOne(new QueryWrapper<Student>().lambda()
                 .eq(Student::getEmail,entity.getEmail())),
                 "该邮箱账号已经注册！");
@@ -36,14 +41,12 @@ public class StudentServiceImpl extends ServiceImpl<StudentDao, Student> impleme
         Assert.isNull(studentDao.selectOne(new QueryWrapper<Student>().lambda()
                         .eq(Student::getUsername,entity.getUsername())),
                 "该用户名已经注册！");
-
-
         return studentDao.save(entity);
     }
 
     @Override
     public boolean updateById(Student entity) {
-        Assert.notNull(entity.getId(),"请选择更新的用户");
+        entity = paramUtil.afterTrim(entity);
         return super.updateById(entity);
     }
 

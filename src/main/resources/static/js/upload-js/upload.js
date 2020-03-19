@@ -146,12 +146,10 @@ var uploader = new plupload.Uploader({
     url: 'http://oss.aliyuncs.com',
 
     filters: {
-        mime_types: [ //只允许上传图片、zip文件和视频文件
-            {title: "Image files", extensions: "jpg,gif,png,bmp"},
-            {title: "Zip files", extensions: "zip,rar"},
-            {title: "video files", extensions: "mp4"}
+        mime_types: [ //只允许上传图片、视频文件
+            {title: "Image files", extensions: "jpg,gif,png,bmp"}
         ],
-        max_file_size: '30mb', //最大只能上传10mb的文件
+        max_file_size: '3mb', //最大只能上传10mb的文件
         prevent_duplicates: true //不允许选取重复文件
     },
 
@@ -165,16 +163,18 @@ var uploader = new plupload.Uploader({
         },
 
         FilesAdded: function (up, files) {
-            if(up.files.length>1) { // 最多上传 3 张图
+            if(up.files.length>1) {
                 alert("只能上传一个文件，请删除多余文件！");
-                document.location.reload();
+                $('#upload-pc').attr("src","");
+                $('#'+up.files[0].id).hide();
+                uploader.splice();//清空上传队列
                 return;
             }
+
             plupload.each(files, function (file) {
                 document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
                     + '<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
                     + '</div>';
-
                 previewImage(file, function(imgSrc) {
                     $("#upload-pc").attr("src", imgSrc);
                 });
@@ -206,16 +206,98 @@ var uploader = new plupload.Uploader({
 
         Error: function (up, err) {
             if (err.code == -600) {
-                document.getElementById('console').appendChild(document.createTextNode("\n选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小"));
+                document.getElementById('console').appendChild(document.createTextNode("\n选择的文件太大了"));
             } else if (err.code == -601) {
-                document.getElementById('console').appendChild(document.createTextNode("\n选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型"));
-            } else if (err.code == -602) {
-                document.getElementById('console').appendChild(document.createTextNode("\n这个文件已经上传过一遍了"));
-            } else {
+                document.getElementById('console').appendChild(document.createTextNode("\n选择的文件后缀不对"));
+            } else if (err.code == -602){
+                //    选择同一个文件
+            }  else {
                 document.getElementById('console').appendChild(document.createTextNode("\nError xml:" + err.response));
             }
         }
     }
 });
 
+var uploader1 = new plupload.Uploader({
+       runtimes: 'html5,flash,silverlight,html4',
+       browse_button: 'selectfiles1',
+       multi_selection: false,
+       container: document.getElementById('container1'),
+       flash_swf_url: '/js/upload-js/lib/plupload-2.1.2/js/Moxie.swf',
+       silverlight_xap_url: '/js/upload-js/lib/plupload-2.1.2/js/Moxie.xap',
+       url: 'http://oss.aliyuncs.com',
+
+       filters: {
+           mime_types: [ //只允许上传视频文件
+               {title: "video files", extensions: "mpg,m4v,mp4,flv,3gp,mov,avi,rmvb,mkv,wmv"}
+           ],
+           max_file_size: '30mb', //最大只能上传10mb的文件
+           prevent_duplicates: true //不允许选取重复文件
+       },
+
+       init: {
+           PostInit: function () {
+               document.getElementById('ossfile1').innerHTML = '';
+               document.getElementById('postfiles1').onclick = function () {
+                   set_upload_param(uploader1, '', false);
+                   return false;
+               };
+           },
+
+           FilesAdded: function (up, files) {
+               if(up.files.length>1) {
+                   alert("只能上传一个文件，请删除多余文件！");
+                   $('#'+up.files[0].id).hide();
+                   uploader.splice();//清空上传队列
+                   return;
+               }
+               plupload.each(files, function (file) {
+                   document.getElementById('ossfile1').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
+                       + '<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
+                       + '</div>';
+               });
+           },
+
+           BeforeUpload: function (up, file) {
+               set_upload_param(up, file.name, true);
+           },
+
+           UploadProgress: function (up, file) {
+               var d = document.getElementById(file.id);
+               d.getElementsByTagName('b')[0].innerHTML = '<h4>上传进度：</h4>'+'<span>' + file.percent + "%</span>";
+               var prog = d.getElementsByTagName('div')[0];
+               var progBar = prog.getElementsByTagName('div')[0]
+               progBar.style.width = 2 * file.percent + 'px';
+               progBar.setAttribute('aria-valuenow', file.percent);
+           },
+
+           FileUploaded: function (up, file, info) {
+               if (info.status == 200) {
+                   document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功!';
+                   var url = host+"/"+get_uploaded_object_name();
+                   $("#video").show().attr("src", url);
+                   $("#video").parent().get(0).load();
+                   $("#video").parent().show();
+               } else if (info.status == 203) {
+                   document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传到OSS成功，但是oss访问用户设置的上传回调服务器失败，失败原因是:' + info.response;
+               } else {
+                   document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = info.response;
+               }
+           },
+
+           Error: function (up, err) {
+               if (err.code == -600) {
+                   document.getElementById('console1').appendChild(document.createTextNode("\n选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小"));
+               } else if (err.code == -601) {
+                   document.getElementById('console1').appendChild(document.createTextNode("\n选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型"));
+               } else if (err.code == -602){
+               //    选择同一个文件
+               } else {
+                   document.getElementById('console1').appendChild(document.createTextNode("\nError xml:" + err.response));
+               }
+           }
+       }
+   });
+
 uploader.init();
+uploader1.init();

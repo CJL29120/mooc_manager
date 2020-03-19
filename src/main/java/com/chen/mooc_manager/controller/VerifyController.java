@@ -30,21 +30,12 @@ import java.util.List;
  * @since 2020-02-29
  */
 @Controller
-@RequestMapping("/admin/verify")
+@RequestMapping("/verify")
 @Slf4j
 public class VerifyController {
 
     @Autowired
     VerifyService verifyService;
-
-    @Resource
-    ModelMapper modelMapper;
-
-    @GetMapping("/apply")
-    private String verify(Model model){
-        model.addAttribute("verify",new Verify());
-        return "admin/course/verify-apply";
-    }
 
     String pattern = "yyyy-MM-dd";
 
@@ -54,48 +45,33 @@ public class VerifyController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat(pattern), true));// CustomDateEditor为自定义日期编辑器
     }
 
-    @PostMapping("/apply")
+    @PostMapping("/add")
     @ResponseBody
-    private Results<Verify> verify(Verify verify){
-        Assert.notNull(verify,"申请信息为空");
-        if(verifyService.save(verify)){
-            return Results.success();
-        }else {
-            return Results.failure();
-        }
+    public Results<Verify> add(Verify verify){
+        Assert.notNull(verify,"申请课程的课程信息不能为空");
+        return verifyService.save(verify) ? Results.success() : Results.failure(500,"申请添加失败");
     }
 
     @GetMapping("/list")
     @ResponseBody
-    private Results<Verify> list(PageTableRequest request){
-        Assert.notNull(request,"请求显示的页码信息为空");
-        request.countOffset();
+    public Results<Verify> list(PageTableRequest request){
+        Assert.notNull(request,"请求显示的页码参数不能为空");
         List<Verify> verifies = verifyService.getAllChecksByPage(request.getOffset(),request.getLimit());
         return Results.success(verifyService.count(), verifies);
     }
 
     @PostMapping("/delete")
     @ResponseBody
-    private Results<Verify> delete(String id){
-        Assert.notNull(id,"请选择删除的申请！");
-        if (verifyService.removeById(id)){
-            return Results.success();
-        }
-        return Results.failure(500,"申请删除失败");
+    public Results<Verify> delete(String id){
+        Assert.notNull(id,"删除的申请ID不能为空");
+        return verifyService.removeById(id) ? Results.success() : Results.failure(500,"申请删除失败");
     }
-
 
     @PostMapping("/deleteBatch")
     @ResponseBody
-    private Results<Verify> deleteBatch(@RequestParam(value="ids[]")List<String> ids){
-        Assert.notNull(ids,"请选择删除的申请！");
-        if (verifyService.removeByIds(ids)){
-            return Results.success();
-        }
-        return Results.failure(500,"申请批量删除失败");
+    public Results<Verify> deleteBatch(@RequestParam(value="ids[]")List<String> ids){
+        Assert.notNull(ids,"删除的申请ID不能为空");
+        return verifyService.removeByIds(ids) ? Results.success() : Results.failure(500,"申请批量删除失败");
     }
-
-
-
 }
 

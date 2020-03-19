@@ -25,6 +25,11 @@ public class PageTableRequest implements Serializable {
 		this.offset = (this.page - 1) * this.limit;
     }
 
+    public Integer getOffset() {
+        countOffset();
+        return offset;
+    }
+
     @Override
     public String toString() {
         return "PageTableRequest{" +

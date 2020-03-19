@@ -63,7 +63,7 @@
                 }
                 ,cols: [
                     [ //表头
-                        {type: 'checkbox', fixed: 'left' ,width:80 ,align:'center'}
+                        {type: 'checkbox' ,width:80 ,align:'center'}
                         ,{field: 'name', title: '课程', width: 100}
                         ,{field: 'coverUrl',  title: '封面' ,templet:'<div style=""><img width="150" src="{{ d.coverUrl}}"></div>' ,width:160}
                         ,{field: 'sectionCount', title: '章节数'   ,width: 100}
@@ -86,7 +86,7 @@
             table.on('tool(member)', function(obj){
                 var data = obj.data;
                 if(obj.event === 'courseEdit'){
-                    xadmin.open('编辑课程','/course/edit/?id='+data.id);
+                    xadmin.open('编辑课程','/course/editPage/?id='+data.id);
                 }
             });
 

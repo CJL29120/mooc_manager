@@ -4,14 +4,22 @@
         <meta charset="UTF-8">
         <title>Friday-System</title>
         <header th:replace="/admin/header::html"></header>
+
+        <style>
+            .layui-table-cell{
+                height: auto!important;
+                white-space: normal;
+                text-align: center;
+            }
+        </style>
     </head>
     <body>
         <div class="x-nav">
           <span class="layui-breadcrumb">
             <a href="">首页</a>
-            <a href="">课程管理</a>
+            <a href="">章节管理</a>
             <a>
-                <cite>审核列表</cite></a>
+                <cite>章节列表</cite></a>
           </span>
             <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
                 <i class="layui-icon" style="line-height:30px">ဂ</i></a>
@@ -28,13 +36,7 @@
 
                         <div class="layui-card-body ">
                             <script type="text/html" id="barDemo">
-                                {{#if(d.status =='1'){}}
-                                <a class="layui-btn layui-btn-xs" lay-event="courseAdd" >创建课程</a>
-                                {{#}else{}}
-                                <a class="layui-btn layui-btn-xs layui-btn-disabled" lay-event="courseAdd" >创建课程</a>
-                                {{#}}}
-
-                                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" permission="sys:user:del">删除</a>
+                                <a class="layui-btn layui-btn-xs" lay-event="sectionEdit" >编辑章节</a>
                             </script>
                         </div>
                     </div>
@@ -46,19 +48,19 @@
         <div class="layui-inline" lay-event="add">
             <i class="layui-icon layui-icon-add-1"></i>
         </div>
-
+        <div class="layui-inline" lay-event="update">
+            <i class="layui-icon layui-icon-edit"></i>
+        </div>
         <div class="layui-inline" lay-event="delete">
             <i class="layui-icon layui-icon-delete"></i>
         </div>
     </script>
-
     <script>
         layui.use(['table'], function(){
-            var table = layui.table,
-                form = layui.form;
+            var table = layui.table;
             table.render({
                 elem: '#table'
-                ,url: '/verify/list' //数据接口
+                ,url: '/section/list' //数据接口
                 ,page: true //开启分页
                 ,toolbar: '#toolbarDemo'
                 ,response: {
@@ -67,13 +69,16 @@
                 }
                 ,cols: [
                     [ //表头
-                        {type: 'checkbox', fixed: 'left'}
-                        ,{field: 'status', title: '状态',     width: 100,
-                        templet:function(d){return  d.status == '0' ? "待审核":d.status == '1' ?
-                            '<a class="" style="color:#3da879">审核通过</a>':'<a class="" style="color:#ff5722">审核未通过</a>';}}
-                        ,{field: 'name', title: '课程' ,width: 100}
-                        ,{field: 'sectionCount', title: '预计章节数'   ,width: 100}
-                        ,{field: 'shortIntro', title: '短述' }
+                        {type: 'checkbox' ,width:80 ,align:'center'}
+                        ,{field: 'sectionId', title: '章节ID', width: 100}
+                        ,{field: 'name', title: '章节名'   ,width: 100}
+                        ,{field: 'coverUrl',  title: '封面' , templet:'<div style=""><img width="260" src="{{d.coverUrl}}"></div>',width:160}
+                        ,{field: 'videoUrl', title: '视频链接'  ,templet:function(d){return  d.videoUrl == '' ?
+                        '<div><video hidden="true"></video></div>' :
+                            '<div> <video controls="controls" style="margin-top: 10px;max-width: 260px;width: 100%;" ><source src="'+d.videoUrl+
+                            '" type="video/mp4"> </video></div>'
+                        }}
+                        ,{field: 'uploadTime', title: '上传时间',templet : "<div>{{layui.util.toDateString(d.uploadTime, 'yyyy年MM月dd日 HH:mm')}}</div>" ,width: 112}
                         ,{title: '操作', fixed: 'right', width: 180, align:'center', toolbar: '#barDemo'}
                     ]
                 ]
@@ -82,24 +87,8 @@
             //监听工具条
             table.on('tool(member)', function(obj){
                 var data = obj.data;
-                if(obj.event === 'del'){
-                    layer.confirm('真的删除么', function(index){
-                        $.ajax({
-                            url:"/verify/delete",
-                            type:"POST",
-                            data:{id:data.id},
-                            dataType:'json',
-                            success:function(result){
-                                layer.ready(function () {
-                                    layer.msg("删除成功", {icon: 1});
-                                    table.reload('table');
-                                });
-                            }
-                        });
-                    });
-                } else if(obj.event === 'courseAdd'){
-                    console.log(data);
-                    xadmin.open('创建课程','/course/addPage/?id='+data.id);
+                if(obj.event === 'sectionEdit'){
+                    xadmin.open('编辑章节信息','/section/editPage/?id='+data.id);
                 }
             });
 
@@ -108,6 +97,18 @@
                     ,data = checkStatus.data; //获取选中的数据
                 console.log(data);
                 switch(obj.event){
+                    case 'add':
+                        xadmin.open("增加章节","/section/addPage");
+                        break;
+                    case 'update':
+                        if(data.length === 0){
+                            layer.msg('请选择一行');
+                        } else if(data.length > 1){
+                            layer.msg('只能同时编辑一个');
+                        } else {
+                            xadmin.open('编辑章节信息','/section/editPage/?id='+data[0].id);
+                        }
+                        break;
                     case 'delete':
                         if(data.length === 0){
                             layer.msg('请选择一行');
@@ -118,7 +119,7 @@
                                     ids[j] = data[j].id;
                                 }
                                 $.ajax({
-                                    url:"/verify/deleteBatch",
+                                    url:"/section/deleteBatch",
                                     type:"POST",
                                     data:{ids:ids},
                                     dataType:'json',
@@ -132,12 +133,8 @@
                             });
                         }
                         break;
-                    case 'add':
-                        parent.xadmin.add_tab('申请开课 ',' /api/getPage?pageName=admin/course/verify-apply ');
-                        break;
                 }
             });
-
         });
     </script>
 

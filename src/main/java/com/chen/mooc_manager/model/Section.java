@@ -19,7 +19,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CourseSection extends Model<CourseSection> {
+public class Section extends Model<Section> {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,10 +27,12 @@ public class CourseSection extends Model<CourseSection> {
     private Integer id;
     private Integer courseId;
     private String name;
-    private Integer sort;
+    private Integer sectionId;
     private Integer duration;
+    private String coverUrl;
     private String videoUrl;
     private Boolean status;
+    private Date uploadTime;
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;

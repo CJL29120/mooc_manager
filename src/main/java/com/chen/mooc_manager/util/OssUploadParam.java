@@ -27,7 +27,7 @@ public class OssUploadParam {
     }
 
     public String getOssUrlPrefix(){
-        return "https://"+bucket+"."+endpoint;
+        return "http://"+bucket+"."+endpoint;
     }
 
     public String getAccessId() {

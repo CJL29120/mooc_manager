@@ -1,11 +1,9 @@
 package com.chen.mooc_manager.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
 import com.chen.mooc_manager.model.Student;
-import com.chen.mooc_manager.model.param.StudentParam;
 import com.chen.mooc_manager.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -44,45 +42,31 @@ public class StudentController {
     @Resource
     ModelMapper modelMapper;
 
-    @GetMapping("/add")
-    public String add(Model model){
-        model.addAttribute("student",new StudentParam());
+    @GetMapping("/addPage")
+    public String addPage(Model model){
+        model.addAttribute("student",new Student());
         return "admin/student/student-add";
     }
 
     @PostMapping("/add")
     @ResponseBody
-    public Results<Student> save(StudentParam param){
-        log.info(param.toString());
-        Student student = modelMapper.map(param, Student.class);
-        log.info(student.toString());
-        if(studentService.save(student)){
-            return Results.success();
-        }else {
-            return Results.failure();
-        }
+    public Results<Student> save(Student student){
+        Assert.notNull(student,"添加学生的学生信息不能为空");
+        return studentService.save(student)? Results.success():Results.failure();
     }
 
     @PostMapping("/delete")
     @ResponseBody
     public Results<Student> delete(Integer id){
-        Assert.notNull(id,"请选择删除的用户！");
-        if(studentService.removeById(id)){
-            return Results.success();
-        }else {
-            return Results.failure();
-        }
+        Assert.notNull(id,"选择删除的用户ID不能为空！");
+        return studentService.removeById(id) ? Results.success():Results.failure();
     }
 
     @PostMapping("/deleteBatch")
     @ResponseBody
     public Results<Student> deleteBatch(@RequestParam(value="ids[]") List<String> ids){
-        Assert.notNull(ids,"请选择删除的用户！");
-        if(studentService.removeByIds(ids)){
-            return Results.success();
-        }else {
-            return Results.failure();
-        }
+        Assert.notNull(ids,"选择删除的用户ID不能为空！");
+        return studentService.removeByIds(ids) ? Results.success():Results.failure();
     }
 
     @GetMapping(value = "/edit")
@@ -101,20 +85,15 @@ public class StudentController {
 
     @PostMapping("/edit")
     @ResponseBody
-    public Results<Student> update(StudentParam param){
-        log.info(param.toString());
-        Student student = modelMapper.map(param, Student.class);
-        if(studentService.updateById(student)){
-            return Results.success();
-        }else {
-            return Results.failure();
-        }
+    public Results<Student> update(Student student){
+        Assert.notNull(student,"编辑学生的学生信息不能为空");
+        return studentService.updateById(student) ? Results.success() : Results.failure();
     }
 
     @GetMapping("/list")
     @ResponseBody
     public Results<Student> list(PageTableRequest request){
-        request.countOffset();
+        Assert.notNull(request,"请求显示的页码参数不能为空");
         List<Student> students = studentService.getAllUsersByPage(request.getOffset(),request.getLimit());
         return Results.success(studentService.count(),students);
     }

@@ -99,7 +99,7 @@
                      课程封面:
                  </label>
 
-                 <img class="layui-upload-img" id="upload-pc" width="200" th:src="${course.coverUrl}">
+                 <img class="layui-upload-img" id="upload-pc" width="200" name="coverUrl" th:src="${course.coverUrl}" th:data-url="${course.coverUrl}">
                  <pre id="console"></pre>
              </div>
 
@@ -126,15 +126,14 @@
      </div>
      <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
      <script type="text/javascript" src="/js/upload-js/upload.js"></script>
-     <script>
 
-      layui.use(['form','layer','upload', 'laydate'], function(){
+     <script>
+     layui.use(['form','layer','upload', 'laydate'], function(){
 
           var form = layui.form
           ,layer = layui.layer
           ,laydate = layui.laydate
-          ,$ = layui.jquery
-          ,upload = layui.upload;
+          ,$ = layui.jquery;
           //日期
           laydate.render({
               elem: '#C_end'
@@ -161,8 +160,7 @@
 
           //监听提交
             form.on('submit(add)', function(data){
-                data.field.coverUrl = host+"/"+get_uploaded_object_name();
-
+                data.field.coverUrl = host.length>0 ? host+"/"+get_uploaded_object_name():'[[${course.coverUrl}]]';
 
                 $.ajax({
                     url:"/course/edit",

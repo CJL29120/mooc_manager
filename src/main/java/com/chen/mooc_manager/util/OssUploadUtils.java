@@ -96,6 +96,7 @@ public class OssUploadUtils {
                 }
                 return new String(message);
             } catch (IOException e) {
+                log.info(e.getMessage());
             }
         }
         return "";

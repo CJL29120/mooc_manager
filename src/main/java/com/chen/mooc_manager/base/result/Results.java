@@ -16,12 +16,12 @@ public class Results<T>  implements Serializable {
 
     public Results() {
     }
+
     public Results(Integer code, String msg) {
         super();
         this.code = code;
         this.msg = msg;
     }
-
 
     public Results(Integer code, String msg, T data, Integer count, List<T> datas) {
         this.code = code;
@@ -30,7 +30,6 @@ public class Results<T>  implements Serializable {
         this.count = count;
         this.datas = datas;
     }
-
 
     /* 无数据传输的 成功返回 */
     public static <T> Results<T> success() {
@@ -81,6 +80,19 @@ public class Results<T>  implements Serializable {
 
     public static <T> Results<T> failure(Integer code, String msg) {
         return new Results<T>( code,  msg);
+    }
+
+    /* 单个数据传输的 失败返回 */
+    public static <T> Results<T> failure(T data) {
+        return new Results<T>( ResponseCode.FAIL.getCode(),  ResponseCode.FAIL.getMessage(), data, 0, null);
+    }
+
+    public static <T> Results<T> failure(String msg, T data) {
+        return new Results<T>(ResponseCode.FAIL.getCode(), msg, data, 0, null);
+    }
+
+    public static <T> Results<T> failure(ResponseCode resultCode, T data) {
+        return new Results<T>( resultCode.getCode(),  resultCode.getMessage(), data, 0, null);
     }
 
     public static Results ok() {
