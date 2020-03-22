@@ -100,26 +100,26 @@
             <div class="tab-content">
                 <div class="tab-pane clearfix active" id="study-line">
 
-                    <div class="col-xs-12 col-sm-6 col-md-4">
-                        <a href="paths/show.html">
-                            <div class="path-item">
-                                <div class="col-xs-5 col-sm-4 path-img">
-                                    <img src="img/1471513730333.png">
-                                </div>
-                                <div class="col-xs-7 col-sm-8">
-                                    <div class="path-name">新手入门</div>
-                                    <div class="path-course-num">
-                                        </span>6</span>
-                                        门课程
+                    <div th:each="course,courseStat:${courses}">
+                        <div class="col-xs-12 col-sm-6 col-md-4">
+                            <a href="paths/show.html">
+                                <div class="path-item">
+                                    <div class="col-xs-5 col-sm-4 path-img">
+                                        <img th:src="${course.coverUrl}">
+                                    </div>
+                                    <div class="col-xs-7 col-sm-8">
+                                        <div class="path-name">[[${course.name}]]</div>
+                                        <div class="path-course-num">
+                                            </span>[[${course.sectionCount}]]</span>
+                                            章节
+                                        </div>
+                                    </div>
+                                    <div class="desc-layer">
+                                        <div class="center">[[${course.shortIntro}]]</div>
                                     </div>
                                 </div>
-                                <div class="desc-layer">
-                                    <div class="center">新手入门路径帮助对 IT 技术感兴趣的新手0基础入门计算机编程。本路径通过新手入门、Linux 及
-                                        Vim课程熟悉实验楼的实践学习环境，再以 C 语言和一个简单的项目引导你一步步进入计算机技术的殿堂。
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,7 +134,7 @@
                 <span class="line"></span>
             </div>
             <div class="clearfix courses">
-
+                <div th:each="course:${vipCourses}">
                 <div class="col-md-3 col-sm-6  course">
                     <a class="course-box" href="courses/show.html">
                         <div class="sign-box">
@@ -144,19 +144,18 @@
                         </div>
                         <div class="course-img">
 
-                            <img alt="Go语言编程" src="img/ncn11.jpg">
+                            <img th:alt="${course.name}" th:src="${course.coverUrl}">
 
                         </div>
 
                         <div class="course-body">
                             <span class="course-title" data-toggle="tooltip" data-placement="bottom"
-                                  title="Go语言编程">Go语言编程</span>
+                                  th:title="${course.name}">[[${course.name}]]</span>
                         </div>
                         <div class="course-footer">
                             <span class="course-per-num pull-left">
                                 <i class="fa fa-users"></i>
-
-                                5741
+                                [[${course.studyCount}]]
                             </span>
                         </div>
                     </a>

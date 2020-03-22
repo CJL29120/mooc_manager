@@ -49,6 +49,10 @@ public class Results<T>  implements Serializable {
         return new Results<T>( ResponseCode.SUCCESS.getCode(),  ResponseCode.SUCCESS.getMessage(), data, 0, null);
     }
 
+    public static <T> Results<T> success(List<T> datas) {
+        return new Results<T>( ResponseCode.SUCCESS.getCode(),  ResponseCode.SUCCESS.getMessage(), null, 0, datas);
+    }
+
     public static <T> Results<T> success(String msg, T data) {
         return new Results<T>(ResponseCode.SUCCESS.getCode(), msg, data, 0, null);
     }

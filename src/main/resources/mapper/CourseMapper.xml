@@ -29,7 +29,51 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, type, classify_id, classify_name, short_intro, description, cover_url, direction, creator_id, video_count, price, isSale, isOnline, isFinished, recommend, weight, study_count, create_time, update_time, deleted
+        id,name,type,classify_name,short_intro,cover_url,direction,price,is_online,is_finished,section_count,follower_count,study_count,end_time
     </sql>
 
+    <select id="selectWithCondition"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        From course
+
+        <foreach collection="map" index="key" item="value" separator="and" open="where">
+            <if test="value == 100">
+                id > 0
+            </if>
+            <if test="value != 100">
+                ${key} = #{value}
+            </if>
+        </foreach>
+
+        order by ${orderBy}
+        <if test="orderDirection == 1">
+            ASC
+        </if>
+        <if test="orderDirection != 1">
+            DESC
+        </if>
+
+         limit #{offset},#{limit}
+
+    </select>
+
+    <select id="countWithCondition"   resultType="java.lang.Integer">
+        select
+
+        count(id)
+
+        From course
+
+        <if test="map != null">
+            <foreach collection="map" index="key" item="value" separator="and" open="where">
+                <if test="value == 100">
+                    id > 0
+                </if>
+                <if test="value != 100">
+                    ${key} = #{value}
+                </if>
+            </foreach>
+        </if>
+    </select>
 </mapper>

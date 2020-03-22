@@ -3,6 +3,8 @@
 <head>
     <title>上课咯</title>
     <header th:replace="header::html"></header>
+    <link rel="stylesheet" href="/admin/xadmin/lib/layui/css/layui.css">
+    <script type="text/javascript" th:src="@{/admin/xadmin/lib/layui/layui.js}" charset="utf-8"></script>
 </head>
 
 <body>
@@ -19,24 +21,27 @@
                     <div class="row course-cates">
                         <div class="col-md-1 course-cates-title">类别：</div>
                         <div class="col-md-11 course-cates-content">
-                            <a class="active" href="/courses/?course_type=all&amp;tag=all">全部</a>
-                            <a class="" href="/courses/?course_type=all&amp;tag=all&amp;fee=free">免费</a>
-                            <a class="" href="/courses/?course_type=all&amp;tag=all&amp;fee=limited">限免</a>
-                            <div class="course-cates-vip ">
-                                <a target="_blank" href="/vip"><img src="/img/vip-icon.png"></a>
-                                <a class="" href="/courses/?course_type=all&amp;tag=all&amp;fee=member">积分</a>
+                            <a name="type" id="type-100" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'type\',\'' + '100'+ '\')'" th:text="全部"></a>
+
+                            <a name="type"  id="type-0" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'type\',\'' + '0'+ '\')'" th:text="免费"></a>
+
+                            <a name="type"  id="type-1" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'type\',\'' + '1'+ '\')'" th:text="限免"></a>
+                            <div name="type" id="type-2" class="course-cates-vip" th:onclick="'changeSimpleCondition(\'type\',\'' + '2'+ '\')'">
+                                <a target="_blank" href="javascript:void(0);"><img src="/img/vip-icon.png"></a>
+                                <a  href="javascript:void(0);"  th:text="积分"></a>
                             </div>
                         </div>
                     </div>
                     <div class="row course-cates">
                         <div class="col-md-1 course-cates-title">标签：</div>
                         <div class="col-md-11 course-cates-content">
-                            <a class="active" href="/courses/?course_type=all&amp;fee=all">全部</a>
+                            <a  name="classify_id" id="classify_id-100" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'classify_id\',\'' + '100'+ '\')'" th:text="全部"></a>
 
-                            <a class="" href="/courses/?course_type=all&amp;tag=Python&amp;fee=all">哲学</a>
+                            <a  name="classify_id" id="classify_id-1" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'classify_id\',\'' + '1'+ '\')'" th:text="艺术"></a>
 
-                            <a class="" href="/courses/?course_type=all&amp;tag=C%2FC%2B%2B&amp;fee=all">经济学</a>
+                            <a  name="classify_id" id="classify_id-2" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'classify_id\',\'' + '2'+ '\')'" th:text="哲学"></a>
 
+                            <a  name="classify_id" id="classify_id-3" href="javascript:void(0);" th:onclick="'changeSimpleCondition(\'classify_id\',\'' + '3'+ '\')'" th:text="经济学"></a>
                         </div>
                     </div>
                 </div>
@@ -48,75 +53,28 @@
                     </ul>
                     <div class="clearfix"></div>
                     <div class="courses-sort">
-                        <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;order=latest">最新</a>
+                        <a name="order" id="create_time" href="javascript:void(0);"
+                            th:onclick="'changeSort(\'create_time\',\'' + '-1'+ '\')'"
+                            th:text="最新">
+                        </a>
                         /
-                        <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;order=hotest">最热</a>
+                        <a name="order" id="weight" href="javascript:void(0);"
+                            th:onclick="'changeSort(\'weight\',\'' + '-1'+ '\')'"
+                            th:text="最热">
+                        </a>
                     </div>
                     <div class="search-result"></div>
 
                     <div class="row">
-                        <div th:each="course,courseStat:${courses}">
-                            <div class="col-md-4 col-sm-6  course">
-                                <a class="course-box" href="courses/show">
-                                    <div class="sign-box">
-                                        <i class="fa fa-star-o course-follow pull-right"
-                                           data-follow-url="/courses/63/follow"
-                                           data-unfollow-url="/courses/63/unfollow" style="display:none"></i>
-                                    </div>
-                                    <div class="course-img">
 
-                                        <img alt="新手指南之玩转实验楼" src="https://dn-simplecloud.shiyanlou.com/ncn63.jpg">
-
-                                    </div>
-                                    <div class="course-body">
-                                        <span class="course-title" data-toggle="tooltip" data-placement="bottom"
-                                              th:text="${course.name}">新手指南之玩转实验楼</span>
-                                    </div>
-                                    <div class="course-footer">
-                                        <span class="course-per-num pull-left">
-                                            <i class="fa fa-users"></i>
-                                            <span th:text="${course.studyCount}"></span>
-                                        </span>
-                                    </div>
-                                </a>
-                            </div>
-                         </div>
+                        <div id="tab_list"></div>
+                        <div id="course-console" class="course-title">
+                            没有找到相关结果>_<，换个姿势去搜索相关数据吧~
+                        </div>
                     </div>
 
-
-                    <nav class="pagination-container">
-                        <ul class="pagination">
-
-                            <li class="disabled">
-                                <a href="#" aria-label="Previous">
-                                    <span aria-hidden="true">上一页</span>
-                                </a>
-                            </li>
-
-                            <li class="active">
-                                <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=1">1</a>
-                            </li>
-
-                            <li class="">
-                                <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=2">2</a>
-                            </li>
-
-                            <li>
-                                <a href='#'>...</a>
-                            </li>
-
-                            <li class="">
-                                <a href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=24">24</a>
-                            </li>
-
-                            <li class="">
-                                <a aria-label="Next" href="/courses/?course_type=all&amp;tag=all&amp;fee=all&amp;page=2">
-                                    <span aria-hidden="true">下一页</span>
-                                </a>
-                            </li>
-
-                        </ul>
-                    </nav>
+                    <!-- 存放分页的容器 -->
+                    <div id="layui"></div>
 
                 </div>
             </div>
@@ -179,6 +137,7 @@
                 </div>
 
             </div>
+
         </div>
     </div>
 
@@ -193,9 +152,110 @@
     ></div>
 
     <footer th:replace="footer::html"></footer>
+</body>
 
     <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
 
-</body>
+<script>
+    var pageInfo = { currentPage:1,pageSize:9};
+    var condition = { map:new Map()};
+    condition.map.set("orderBy","weight");
+    condition.map.set("orderDirection","-1");
+
+
+
+    function changeActive(key,value) {
+        console.log(key+"-"+value)
+        $("[name='"+key+"']").attr("class","");
+        $("div[name='"+key+"']").attr("class","course-cates-vip");
+        $("#"+key+'-'+value).addClass("active");
+    }
+
+    function changeOrderActive(key) {
+        $("[name='order']").attr("class","");
+        $("#"+key).addClass("active");
+    }
+
+
+    function changeSimpleCondition(key, value) {
+        changeActive(key,value);
+        switch (key) {
+            case '*':
+                condition.map.delete(key);
+                console.log("*")
+                break;
+            default:
+                condition.map.set(key,value);
+        }
+        pageInfo.currentPage=1;
+        initLayPage(pageInfo,condition);
+    }
+
+    function changeSort(orderBy, direction) {
+        pageInfo.currentPage=1;
+        changeOrderActive(orderBy);
+        condition.map.set("orderBy",orderBy);
+        condition.map.set("orderDirection",direction);
+        initLayPage(pageInfo,condition);
+    }
+
+
+    $(function () {
+        initLayPage(pageInfo,condition);
+    });
+
+    /**
+     * 初始化layui分页
+     */
+
+    function initLayPage(pageInfo,condition) {
+
+        $.post("/course/listBy", {page:pageInfo.currentPage,limit:pageInfo.pageSize,condition:JSON.stringify(condition)}, function (data) {
+            layui.use(['laypage', 'layer'], function () {
+                var page = layui.laypage;
+                page.render({
+                    elem: 'layui',
+                    count: data.count,
+                    limit: pageInfo.pageSize,
+                    curr: pageInfo.currentPage,
+                    limits: [9, 18, 27,36],			//可选每页显示条数
+                    groups: 5  ,                    //连续页码个数
+                    first: "首页",
+                    last: "尾页",
+                    layout: [ 'prev', 'page', 'next', 'skip','count', 'limit'],
+                    jump: function (obj, first) {
+                        if (!first) {
+                            pageInfo.currentPage = obj.curr;
+                            pageInfo.pageSize = obj.limit;
+                            initLayPage(pageInfo,condition);
+                        }
+                    }
+                });
+                if(data.count == 0){
+                    $('#course-console').show();
+                }else {
+                    $('#course-console').hide();
+                }
+                fillTable(data.datas,(pageInfo.currentPage - 1) * pageInfo.pageSize); //页面填充
+            })
+        });
+    }
+
+    //填充表格数据
+    function fillTable(data, num) {
+        $("#tab_list").html('');
+
+        for (var i = 0; i < data.length; i++) {
+            var info = '<div class="col-md-4 col-sm-6  course"><a class="course-box" href="courses/show"><div class="course-img">';
+            info += '<img alt="'+ data[i].name +'" src='+ data[i].coverUrl;
+            info += '></div><div class="course-body"><span class="course-title" data-toggle="tooltip" data-placement="bottom" >';
+            info += data[i].name + '</span></div><div class="course-footer"><span class="course-per-num pull-left"><i class="fa fa-users"></i>';
+            info += '<span >'+ data[i].studyCount +'</span>';
+            info += '</span></div></a></div>';
+            $("#tab_list").append(info);
+        }
+    }
+    </script>
+
 </html>

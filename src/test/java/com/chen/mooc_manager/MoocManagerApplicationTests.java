@@ -1,5 +1,6 @@
 package com.chen.mooc_manager;
 
+import com.chen.mooc_manager.dao.CourseDao;
 import com.chen.mooc_manager.model.Course;
 import com.chen.mooc_manager.model.Student;
 import com.chen.mooc_manager.service.CourseService;
@@ -12,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,6 +25,9 @@ public class MoocManagerApplicationTests {
 
 	@Autowired
 	CourseService courseService;
+
+	@Resource
+	CourseDao courseDao;
 
 	@Test
 	public void contextLoads() {
@@ -74,5 +81,15 @@ public class MoocManagerApplicationTests {
 
 		String s = "asdsa&";
 		log.info(s.substring(0,s.length()-1));
+	}
+
+	@Test
+	public void courseDao_selectWithCondition(){
+		HashMap<String,String> map = new HashMap<>();
+		map.put("type","0");
+		map.put("classify_id","1");
+		List<Course> courses = courseDao.selectWithCondition(map,"weight","1",1,9);
+		courses.forEach(System.out::println);
+		log.info(courses.size()+"");
 	}
 }

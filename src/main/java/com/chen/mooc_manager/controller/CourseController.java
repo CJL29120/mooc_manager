@@ -1,17 +1,13 @@
 package com.chen.mooc_manager.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.alibaba.fastjson.JSONObject;
 import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
 import com.chen.mooc_manager.model.dto.CourseAddDTO;
 import com.chen.mooc_manager.model.*;
+import com.chen.mooc_manager.model.param.CourseConditionParam;
 import com.chen.mooc_manager.service.*;
-import com.chen.mooc_manager.model.dto.CourseSearchDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +21,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -52,10 +49,12 @@ public class CourseController {
     @Resource
     ModelMapper modelMapper;
 
+
     @GetMapping({"/", "/index", "/index.html"})
     public String index() {
         return "courses/index";
     }
+
 
     @GetMapping({"/addPage"})
     public String addPage(Model model, String id) {
@@ -82,7 +81,7 @@ public class CourseController {
         return Results.failure(course);
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @ResponseBody
     public Results<Course> list(PageTableRequest request) {
         Assert.notNull(request, "请求显示的页码参数不能为空");
@@ -110,39 +109,28 @@ public class CourseController {
         return courseService.edit(course) ? Results.success():Results.failure(course);
     }
 
-    //"/courses?type=1&classifyId=4&order=4&page=1"
+    //"/course?type=1&classifyId=4&order=4&page=1"
     @GetMapping("")
-    public String indexByOrder(@ModelAttribute CourseSearchDTO courseSearchDTO, Model model) {
-        log.info("type:" + courseSearchDTO.toString());
-
-        int type = courseSearchDTO.getType(),
-                classifyId = Integer.parseInt(courseSearchDTO.getClassifyId()),
-                order = courseSearchDTO.getOrder(),
-                current = courseSearchDTO.getCurrent();
-
-        IPage page = new Page(current, 10);
-        QueryWrapper<Course> wrapper = new QueryWrapper<>();
-
-        if (type >= 0) {
-            wrapper.lambda().eq(Course::getType, type);
-        }
-        if (classifyId >= 0) {
-            wrapper.lambda().eq(Course::getClassifyId, classifyId);
-        }
-
-        wrapper.lambda().orderByDesc((order == 0) ? Course::getCreateTime : Course::getWeight);
-        List<Course> list = courseService.list(wrapper);
-
-        Page<Course> coursePage = (Page<Course>) courseService.page(page, wrapper);
-        log.info("total：" + coursePage.getTotal());
-        log.info("current：" + coursePage.getCurrent());
-        log.info("size：" + coursePage.getSize());
-        log.info("list：" + coursePage.getRecords());
-
-        list.forEach(System.out::println);
-        model.addAttribute("courses", list);
+    public String indexByOrder(Model model) {
+        model.addAttribute("courses", courseService.list().subList(0,9));
         return "courses/index";
     }
 
+    @PostMapping("/listBy")
+    @ResponseBody
+    public Results listBy(PageTableRequest request, @RequestParam(value = "condition") String con) {
+        Assert.notNull(request, "请求显示的页码参数不能为空");
+        CourseConditionParam condition = JSONObject.parseObject(con, CourseConditionParam.class);
+
+        List<List> list = condition.getMap();
+        Map hashMap = new HashMap();
+        list.forEach(l -> hashMap.put(l.get(0),l.get(1)));
+        log.info(hashMap.toString());
+        String orderBy = (String)hashMap.remove("orderBy");
+        String orderDirection = (String) hashMap.remove("orderDirection");
+
+        List courses = courseService.getWithCondition(hashMap,orderBy,orderDirection,request.getOffset(),request.getLimit());
+        return Results.success(courseService.countWithCondition(hashMap),courses);
+    }
 
 }
