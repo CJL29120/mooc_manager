@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/libs/wangEditor/wangEditor.js"></script>
+    <script src="/js/jquery/2.2.4/jquery.min.js"></script>
+    <script src="/js/xss/xss.js"></script>
+</head>
+<body>
+<div id="editor">
+    <p>Hello World</p>
+</div>
+<button id="submit">提交</button>
+<div id="html"></div>
+<input id="htmlId"/>
+<button id="get">获取Html</button>
+
+
+</body>
+<script>
+    var E = window.wangEditor;
+    var editor = new E("#editor")
+    editor.create();
+    var options = {
+        whiteList: {
+            a: ["target", "href", "title"],
+            abbr: ["title"],
+            address: [],
+            area: ["shape", "coords", "href", "alt"],
+            article: [],
+            aside: [],
+            audio: ["autoplay", "controls", "loop", "preload", "src"],
+            b: [],
+            bdi: ["dir"],
+            bdo: ["dir"],
+            big: [],
+            blockquote: ["cite"],
+            br: [],
+            caption: [],
+            center: [],
+            cite: [],
+            code: [],
+            col: ["align", "valign", "span", "width"],
+            colgroup: ["align", "valign", "span", "width"],
+            dd: [],
+            del: ["datetime"],
+            details: ["open"],
+            div: [],
+            dl: [],
+            dt: [],
+            em: [],
+            font: ["color", "size", "face"],
+            footer: [],
+            h1: [],
+            h2: [],
+            h3: [],
+            h4: [],
+            h5: [],
+            h6: [],
+            header: [],
+            hr: [],
+            i: [],
+            img: ["src", "alt", "title", "width", "height"],
+            ins: ["datetime"],
+            li: [],
+            mark: [],
+            nav: [],
+            ol: [],
+            p: [],
+            pre: [],
+            s: [],
+            section: [],
+            small: [],
+            span: ['style','style*'],
+            sub: [],
+            sup: [],
+            strong: [],
+            table: ["width", "border", "align", "valign"],
+            tbody: ["align", "valign"],
+            td: ["width", "rowspan", "colspan", "align", "valign"],
+            tfoot: ["align", "valign"],
+            th: ["width", "rowspan", "colspan", "align", "valign"],
+            thead: ["align", "valign"],
+            tr: ["rowspan", "align", "valign"],
+            tt: [],
+            u: [],
+            ul: [],
+            video: ["autoplay", "controls", "loop", "preload", "src", "height", "width"]
+        },
+        css:false
+    };
+
+
+    $('#submit').click(function () {
+        var html = editor.txt.html();
+        html = filterXSS(html,options);
+        console.log(html);
+
+        $.post("/test",{htmlJson:JSON.stringify(html)},function (data) {
+            console.log(data.code);
+                if (data.code == 200) {
+                    console.log("请求发送成功！   id:"+data.data);
+                } else {
+                    alert("请求失败！");
+                }
+            }
+        )
+    });
+
+    $('#get').click(function () {
+        $.post("/testGet",{id:$('#htmlId').val()},function (data) {
+                if (data.code == 200) {
+                    var html = filterXSS(JSON.parse(data.data.htmlString),options)
+                    console.log(html)
+                    $("#html").html(html);
+                } else {
+                    alert("请求失败！");
+                }
+            },'json'
+        );
+    });
+
+</script>
+</html>

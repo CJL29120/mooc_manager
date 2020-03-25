@@ -5,6 +5,11 @@ spring:
     username: root
     password: 123456
 
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/resourcse/templates
+
 mybatis-plus:
   type-aliases-package: com.chen.mooc_manager.model
   mapper-locations: classpath:/mapper/*.xml

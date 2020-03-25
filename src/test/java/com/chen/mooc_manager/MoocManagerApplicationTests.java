@@ -1,8 +1,11 @@
 package com.chen.mooc_manager;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.chen.mooc_manager.dao.CommentDao;
 import com.chen.mooc_manager.dao.CourseDao;
-import com.chen.mooc_manager.model.Course;
-import com.chen.mooc_manager.model.Student;
+import com.chen.mooc_manager.dao.SectionDao;
+import com.chen.mooc_manager.dao.TeacherDao;
+import com.chen.mooc_manager.model.*;
 import com.chen.mooc_manager.service.CourseService;
 import com.chen.mooc_manager.util.ParamUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +18,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -28,6 +33,15 @@ public class MoocManagerApplicationTests {
 
 	@Resource
 	CourseDao courseDao;
+
+	@Resource
+	SectionDao sectionDao;
+
+	@Resource
+	TeacherDao teacherDao;
+
+	@Resource
+	CommentDao commentDao;
 
 	@Test
 	public void contextLoads() {
@@ -91,5 +105,25 @@ public class MoocManagerApplicationTests {
 		List<Course> courses = courseDao.selectWithCondition(map,"weight","1",1,9);
 		courses.forEach(System.out::println);
 		log.info(courses.size()+"");
+	}
+
+	@Test
+	public void courseServiceImpl_getShowDetail(){
+		List<Section> sections = sectionDao.selectList(new QueryWrapper<Section>().lambda().eq(Section::getCourseId,"2"));
+		log.info(sections.toString());
+
+		log.info(Optional.ofNullable(teacherDao.selectById("2")).orElse(new Teacher()).toString());
+		log.info(Optional.ofNullable(teacherDao.selectById("3")).orElse(new Teacher()).toString());
+
+		log.info(sectionDao.selectList(new QueryWrapper<Section>().lambda().eq(Section::getCourseId,"21565")).toString());
+	}
+
+	@Test
+	public void test_saveHtmlJson(){
+			Comment comment = new Comment();
+			comment.setSectionId(2);
+			comment.setUserId(2);
+			comment.setContent("哇，猴犀利");
+			log.info(String.valueOf(commentDao.insert(comment)));
 	}
 }

@@ -1,15 +1,16 @@
 package com.chen.mooc_manager.controller;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.chen.mooc_manager.model.Course;
+import com.chen.mooc_manager.base.result.Results;
+import com.chen.mooc_manager.dao.HtmlDao;
+import com.chen.mooc_manager.model.Html;
 import com.chen.mooc_manager.service.CourseService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -21,20 +22,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @since 2020-02-29
  */
 @Controller
+@Slf4j
 public class ATestController {
 
     @Autowired
     CourseService service;
 
-    @RequestMapping("/a")
-    @ResponseBody
-    String test(){
-        QueryWrapper<Course> wrapper = new QueryWrapper();
-        wrapper.lambda().eq(Course::getDeleted,0);
-        JSONArray array =new JSONArray();
-
-        return JSON.toJSONString(service.list(wrapper));
-    }
+    @Resource
+    HtmlDao htmlDao;
 
     @RequestMapping("/admin")
     String admin(){
@@ -46,5 +41,26 @@ public class ATestController {
         return "admin/student/student-list";
     }
 
+    @GetMapping("/test")
+    public String test(){
+        return "test";
+    }
+
+
+    @PostMapping("/test")
+    @ResponseBody
+    public Results<String> test_html(@RequestParam("htmlJson") String htmlJson){
+        Html html = new Html();
+        html.setHtmlString(htmlJson);
+        log.info("执行test Post方法");
+        htmlDao.insert(html);
+        return Results.success();
+    }
+
+    @PostMapping("/testGet")
+    @ResponseBody
+    public Results<Html> get_test_html(@RequestParam("id") Integer id){
+        return Results.success(htmlDao.selectById(id));
+    }
 }
 
