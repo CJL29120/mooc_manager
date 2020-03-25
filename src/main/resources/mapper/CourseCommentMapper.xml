@@ -3,7 +3,7 @@
 <mapper namespace="com.chen.mooc_manager.dao.CourseCommentDao">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.chen.mooc_manager.model.CourseComment">
+    <resultMap id="BaseResultMap" type="com.chen.mooc_manager.model.Comment">
         <id column="id" property="id" />
         <result column="username" property="username" />
         <result column="to_username" property="toUsername" />

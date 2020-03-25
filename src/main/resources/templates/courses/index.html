@@ -247,7 +247,7 @@
         $("#tab_list").html('');
 
         for (var i = 0; i < data.length; i++) {
-            var info = '<div class="col-md-4 col-sm-6  course"><a class="course-box" href="courses/show"><div class="course-img">';
+            var info = '<div class="col-md-4 col-sm-6  course"><a class="course-box" href="/course/show?id='+data[i].id+'"><div class="course-img">';
             info += '<img alt="'+ data[i].name +'" src='+ data[i].coverUrl;
             info += '></div><div class="course-body"><span class="course-title" data-toggle="tooltip" data-placement="bottom" >';
             info += data[i].name + '</span></div><div class="course-footer"><span class="course-per-num pull-left"><i class="fa fa-users"></i>';

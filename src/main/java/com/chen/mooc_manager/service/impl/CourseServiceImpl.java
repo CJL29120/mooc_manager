@@ -1,20 +1,27 @@
 package com.chen.mooc_manager.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
 import com.chen.mooc_manager.dao.CourseDao;
 import com.chen.mooc_manager.dao.RecommendDao;
+import com.chen.mooc_manager.dao.SectionDao;
+import com.chen.mooc_manager.dao.TeacherDao;
 import com.chen.mooc_manager.model.Course;
+import com.chen.mooc_manager.model.Section;
+import com.chen.mooc_manager.model.Teacher;
+import com.chen.mooc_manager.model.dto.CourseShowDTO;
+import com.chen.mooc_manager.model.param.CourseConditionParam;
 import com.chen.mooc_manager.service.CourseService;
 import com.chen.mooc_manager.util.ParamUtil;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,8 +41,17 @@ public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements
     @Resource
     RecommendDao recommendDao;
 
+    @Resource
+    SectionDao sectionDao;
+
+    @Resource
+    TeacherDao teacherDao;
+
     @Autowired
     ParamUtil<Course> paramUtil;
+
+    @Resource
+    ModelMapper modelMapper;
 
     @Override
     public boolean add(Course course) {
@@ -72,13 +88,36 @@ public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements
     }
 
     @Override
-    public List<Course> getWithCondition(Map map, String orderBy, String orderDirection,Integer offset,Integer limit) {
-        return courseDao.selectWithCondition(map, orderBy,orderDirection,offset,limit);
+    public List<Course> getWithCondition(CourseConditionParam condition, PageTableRequest request) {
+        List<List> list = condition.getMap();
+        Map hashMap = new HashMap();
+        list.forEach(l -> hashMap.put(l.get(0),l.get(1)));
+//        log.info(hashMap.toString());
+        String orderBy = (String)hashMap.remove("orderBy");
+        String orderDirection = (String) hashMap.remove("orderDirection");
+
+        return courseDao.selectWithCondition(hashMap, orderBy,orderDirection,request.getOffset(),request.getLimit());
     }
 
     @Override
-    public  Integer countWithCondition(Map map){
-        return courseDao.countWithCondition(map);
+    public  Integer countWithCondition(CourseConditionParam condition){
+        List<List> list = condition.getMap();
+        Map hashMap = new HashMap();
+        list.forEach(l -> hashMap.put(l.get(0),l.get(1)));
+        hashMap.remove("orderBy");
+        hashMap.remove("orderDirection");
+        return courseDao.countWithCondition(hashMap);
+    }
+
+    @Override
+    public CourseShowDTO getShowDetail(Integer courseId) throws RuntimeException {
+        CourseShowDTO dto = modelMapper.map(courseDao.selectById(courseId), CourseShowDTO.class);
+
+        List<Section> sections = sectionDao.selectList(new QueryWrapper<Section>().lambda().eq(Section::getCourseId,courseId));
+        dto.setSections(sections);
+        dto.setCreator(Optional.ofNullable(teacherDao.selectById(dto.getCreatorId())).orElseThrow(() -> new RuntimeException("返回课程创建者为空")));
+
+        return dto;
     }
 
 }

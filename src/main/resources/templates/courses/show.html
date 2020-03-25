@@ -10,6 +10,42 @@
 
         }
     </style>
+    <style>
+        .row{
+            margin-left:0px;
+            margin-right:0px;
+        }
+        .panel-body{
+            padding-bottom:5px;
+        }
+        div.circle-avatar{
+            /* make it responsive */
+            max-width: 26px;
+            width:26px;
+            height:26px;
+            display:block;
+            /* div height to be the same as width*/
+            /*padding-top:100%;*/
+            /* make it a circle */
+            border-radius:50%;
+
+            /* Centering on image`s center*/
+            background-position-y: center;
+            background-position-x: center;
+            background-repeat: no-repeat;
+
+            /* it makes the clue thing, takes smaller dimension to fill div */
+            background-size: cover;
+
+            /* it is optional, for making this div centered in parent*/
+            margin: 0 auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -64,9 +100,12 @@
                         </div>
 
                         <div class="course-infobox-progress">
-                            <div th:each="i:${#numbers.sequence(1,course.finishedCount)}" class="course-progress-finished"></div>
+                            <div th:if="${course.finishedCount} ne 0" th:each="i:${#numbers.sequence(1,course.finishedCount)}"
+                                 class="course-progress-finished"></div>
 
-                            <div th:each="i:${#numbers.sequence(1,(course.sectionCount - course.finishedCount))}" class="course-progress-new"></div>
+                            <div th:if="${course.sectionCount - course.finishedCount} ne 0 "
+                                 th:each="i:${#numbers.sequence(1,(course.sectionCount - course.finishedCount))}"
+                                 class="course-progress-new"></div>
 
                             <span> ( </span>
                             <span th:text="${course.sectionCount}"></span>
@@ -98,11 +137,11 @@
 
                         <li role="presentation">
                             <a href="#comments" class="stat-event" aria-controls="comments" role="tab"
-                               data-stat="course_comment" data-toggle="tab">课程评论(1194)</a>
+                               data-stat="course_comment" data-toggle="tab">课程评价(1194)</a>
                         </li>
                         <li role="presentation">
                             <a href="#QA" class="stat-event" data-stat="course_QA" aria-controls="QA"
-                               role="tab" data-toggle="tab">课程问答(3417)</a>
+                               role="tab" data-toggle="tab">课程答疑(3417)</a>
                         </li>
                         <li role="presentation">
                             <a href="#note" class="stat-event" data-stat="course_note" aria-controls="note"
@@ -116,11 +155,11 @@
 
                             <div class="lab-item " th:each="section:${course.sections}">
 
-                                <div class="jumpDiv" th:data-bind="${section.sort}"> </div>
+                                <div class="jumpDiv" th:data-bind="${section.sectionId}"> </div>
                                 <div class="lab-item-status">
                                     <img src="/img/lab-not-ok.png">
                                 </div>
-                                <div class="lab-item-index" th:text="${section.sort}">第2节</div>
+                                <div class="lab-item-index" th:text="${section.sectionId}">第2节</div>
                                 <div class="lab-item-title" data-toggle="tooltip" data-placement="bottom"
                                      th:text="${section.name}">基本概念及操作</div>
 
@@ -140,16 +179,23 @@
                             <div class="comment-box">
                                 <div class="comment-form">
 
-                                    <div class="comment-form-unlogin">
-                                        请
-                                        <a href="#sign-modal" data-toggle="modal" data-sign="signin" data-next="/courses/1">
-                                            登录 </a>
-                                        后发表评论
-                                    </div>
-
                                 </div>
                                 <div class="comment-title">最新评论</div>
-                                <div class="comment-list">
+                                <div class="comment-list" id="comment-list">
+                                    <div class="panel panel-default ">
+                                        <div class="panel-body" style="padding-bottom:5px">
+                                            <div class="pull-left circle-avatar" style="background-image:url(../img/ncn1.jpg);"></div>
+                                            <span class="pull-left" style="clear: both !important">Basic panel example Nihil anim keffiyeh helvetica, craft beer labore wes anderson
+                                                cred nesciunt sapiente ea proident. Ad vegan excepteur butcher
+                                                vice lomo.</span>
+                                            <div class="row">
+                                                <div class="pull-left" style="clear: both !important"><span>2020-06-12 14:51</span></div>
+                                                <span class="pull-right">
+                                                    <p class="glyphicon glyphicon-heart-empty"></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="pagination-container"></div>
                             </div>
@@ -474,25 +520,81 @@
         </div>
     </div>
 
-
-    <div id="base-data"
-         data-flash="false"
-         data-is-login=false
-         data-is-jwt=true
-         data-msg-user=""
-         data-msg-system="">
-    </div>
-
     <footer th:replace="footer::html"></footer>
 
     <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
     <script type="text/javascript">
-        $(".jumpDiv").click(function (e,ui) {
-            var sort = $(this).attr("data-bind");
-            console.log(sort);
-            // window.location.hrefc = ;
+        refresh();
+
+        function refresh(){
+            $.get("/comment/courseComment",{sectionId:"2"},function (data) {
+                if(data.code==200){
+                    initComment(data.datas);
+                }else {
+
+                }
+            });
+
+            $.get("/comment/like",{},function(data){
+                if(data.code == 200){
+                    $.each(data.datas,function (key,like) {
+                        var commentId = like.commentId;
+                        $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                    })
+                }
+            });
+        }
+
+
+        $(document).on("click","p[id^=like]",function(e){
+            var commentId = e.target.id.replace("like","");
+            var content = $('#comment-content'+commentId).val();
+            console.log(content);
+            $.post("/comment/like",{commentId:commentId,userId:2},function (data) {
+                if(data.code==200){
+                    $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                }else {
+
+                }
+            });
         });
+
+        Date.prototype.Format = function (fmt) {
+            var o = {
+                "M+": this.getMonth() + 1, // 月份
+                "d+": this.getDate(), // 日
+                "H+": this.getHours(), // 小时
+                "m+": this.getMinutes(), // 分
+                "s+": this.getSeconds(), // 秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+                "S": this.getMilliseconds() // 毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
+        function initComment(comments){
+            $("#comment-list").html("");
+            var html ='';
+            $.each(comments,function (key,comment) {
+                html += '<div class="panel panel-default ">' +
+                    '<div class="panel-body" style="padding-bottom:5px">'+
+                    '\t\t<div class="pull-left circle-avatar" style="background-image:url('+ comment.avatarUrl +')"></div>\n' +
+                    '\t\t<div class="pull-left" style="clear: both !important"><span>'+  comment.content  +'</span></div>\n' +
+                    '\t\t<div class="row">\n' +
+                    '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(comment.createTime).Format("yyyy-MM-dd") +'</span></div>\n' +
+                    '\t\t\t<span class="pull-right">\n' +
+                    '\t\t\t\t<p class="glyphicon glyphicon-heart-empty"  id="like'+ comment.id +'"></p>\n' +
+                    '\t\t\t</span>\n' +
+                    '\t\t</div>\n' +
+                    '\t</div>\n';
+                html+='</div>';
+            });
+            $("#comment-list").append(html);
+        }
 
     </script>
 </body>

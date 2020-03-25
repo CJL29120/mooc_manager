@@ -4,12 +4,48 @@
     <meta charset="utf-8">
 
     <header th:replace="header::html"></header>
+    <script src="/js/jquery/2.2.4/jquery.min.js"></script>
+    <style>
+        .row{
+            margin-left:0px;
+            margin-right:0px;
+        }
+        .panel-body{
+            padding-bottom:5px;
+        }
+        div.circle-avatar{
+            /* make it responsive */
+            max-width: 26px;
+            width:26px;
+            height:26px;
+            display:block;
+            /* div height to be the same as width*/
+            /*padding-top:100%;*/
+            /* make it a circle */
+            border-radius:50%;
 
+            /* Centering on image`s center*/
+            background-position-y: center;
+            background-position-x: center;
+            background-repeat: no-repeat;
+
+            /* it makes the clue thing, takes smaller dimension to fill div */
+            background-size: cover;
+
+            /* it is optional, for making this div centered in parent*/
+            margin: 0 auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+    </style>
 <body>
 
     <navbar th:replace="navbar::html"></navbar>
 
-    <div class="container  layout layout-margin-top">
+    <div class="container  layout layout-margin-top" style="width:1300px">
 
     <div class="row">
         <div class="col-md-9 layout-body">
@@ -17,8 +53,8 @@
                 <ul class="nav nav-tabs" role="tablist">
 
                     <li role="presentation" class="active" style="margin: auto;">
-                        <a href="#" aria-controls="labs" role="tab" data-toggle="tab" style="margin: auto;"
-                        data-th-text="${section.name}" >VIdeo</a>
+                        <h3  aria-controls="labs" role="tab" data-toggle="tab" style="margin: auto;"
+                        data-th-text="${section.name}" ></h3>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -37,9 +73,9 @@
                         width="780"
                         height="400"
                         data-setup='{}'>
-                        <source data-th-src="${section.videoUrl}" type="video/mp4"></source>
-                        <source data-th-src="${section.videoUrl}" type="video/webm"></source>
-                        <source data-th-src="${section.videoUrl}" type="video/ogg"></source>
+                        <source data-th-src="${section.videoUrl}" type="video/mp4">
+                        <source data-th-src="${section.videoUrl}" type="video/webm">
+                        <source data-th-src="${section.videoUrl}" type="video/ogg">
 
                         <p class="vjs-no-js">
                         To view this video please enable JavaScript, and consider upgrading to a
@@ -54,28 +90,99 @@
         </div>
 
 
-        <div class="col-md-3 layout-side">
+        <div class="col-md-3 layout-side" style="width: 310px">
 
-            <div class="side-image side-image-pc">
-                <img src="../img/ncn1.jpg?imageView2/0/h/300">
-            </div>
-
-            <div class="sidebox adv-course">
+            <div class="sidebox adv-course" style=" max-height:599px;">
                 <div class="sidebox-header">
                     <h4 class="sidebox-title">评论</h4>
                 </div>
-                <div class="sideobx-body course-content pre-scrollable" style=" height:269px; overflow:auto">
-                    <li>awsl</li>
-                    <li>nice</li>
-                    <li>刘海都是</li>
-                    <li>awsl</li>
-                    <li>nice</li>
-                    <li>刘海都是</li>
-                    <li>awsl</li>
-                    <li>nice</li>
-                    <li>刘海都是</li>
-                    <li>awsl</li>
-                    <li>nice</li>
+                <div class="sidebox-body pre-scrollable" style=" max-height:384px;">
+                    <div class="panel-group" id="accordion">
+
+
+<!--                        <div class="panel panel-default ">
+                            <div class="panel-body">
+                                <span>Basic panel example Nihil anim keffiyeh helvetica, craft beer labore wes anderson
+                                        cred nesciunt sapiente ea proident. Ad vegan excepteur butcher
+                                        vice lomo.</span>
+                                <div class="row">
+                                    <div class="pull-left"><span th:align="left">2020-06-12 14:51</span></div>
+                                    <span class="pull-right">
+                                        <p class="glyphicon glyphicon-heart-empty"></p>
+                                        <span  class="glyphicon glyphicon-pencil" data-toggle="collapse" href="#collapseThree" data-parent="#accordion"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="collapseThree" class="panel-collapse collapse">
+                                <div class="panel-heading row">
+                                    <div class="input-group col-lg-12" >
+                                        <input type="text" class="form-control" style="border:none;box-shadow:none" placeholder="请输入评论">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" style="border:none;" type="button">回复</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default ">
+                            <div class="panel-body">
+                                <span>Basic panel example Nihil anim keffiyeh helvetica, craft beer labore wes anderson
+                                        cred nesciunt sapiente ea proident. Ad vegan excepteur butcher
+                                        vice lomo.</span>
+                                <div class="row">
+                                    <div class="pull-left"><span th:align="left">2020-06-12 14:51</span></div>
+                                    <span class="pull-right">
+                                        <p class="glyphicon glyphicon-heart-empty"></p>
+                                        <span  class="glyphicon glyphicon-pencil" data-toggle="collapse" href="#collapseFour" data-parent="#accordion"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="collapseFour" class="panel-collapse collapse">
+                                <div class="panel-heading row">
+                                    <div class="input-group col-lg-12" >
+                                        <input type="text" class="form-control" style="border:none;box-shadow:none" placeholder="请输入评论">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" style="border:none;" type="button">回复</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default ">
+                            <div class="panel-body">
+                                <span>Basic panel example Nihil anim keffiyeh helvetica, craft beer labore wes anderson
+                                        cred nesciunt sapiente ea proident. Ad vegan excepteur butcher
+                                        vice lomo.</span>
+                                <div class="row">
+                                    <div class="pull-left"><span th:align="left">2020-06-12 14:51</span></div>
+                                    <span class="pull-right">
+                                        <p class="glyphicon glyphicon-heart-empty"></p>
+                                        <span  class="glyphicon glyphicon-pencil" data-toggle="collapse" href="#collapseFive" data-parent="#accordion"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="collapseFive" class="panel-collapse collapse">
+                                <div class="panel-heading row">
+                                    <div class="input-group col-lg-12" >
+                                        <input type="text" class="form-control" style="border:none;box-shadow:none" placeholder="请输入评论">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" style="border:none;" type="button">回复</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+                <div class="sidebox-footer" style=" max-height:80px;">
+                    <div class="panel-heading ">
+                        <div class="input-group col-lg-12" >
+                            <input id="section-comment" type="text" class="form-control" style="box-shadow:none;width:174px" placeholder="请输入评论">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default"  id="section-submit" type="button">回复</button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -87,7 +194,130 @@
 
 
     <footer th:replace="footer::html"></footer>
+</body>
     <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
-</body>
+
+    <script>
+        refresh();
+
+        function refresh(data){
+            $.get("/comment/sectionComment",{sectionId:"2"},function (data) {
+                if(data.code==200){
+                    initComment(data.datas);
+                }else {
+
+                }
+            });
+
+            $.get("/comment/like",{},function(data){
+               if(data.code == 200){
+                   $.each(data.datas,function (key,like) {
+                       var commentId = like.commentId;
+                       $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                   })
+               }
+            });
+        }
+
+        $("#section-submit").click(function (){
+            $.post("/comment/addSectionComment",{id:[[${section.id}]],content:$("#section-comment").val(),userId:2},function (data) {
+                if(data.code==200){
+                    refresh();
+                    console.log("成功发表评论！")
+                }else {
+
+                }
+            });
+        });
+
+        $(document).on("click","button[id^=reply-submit]",function(e){
+            var commentId = e.target.id.replace("reply-submit","");
+            var content = $('#comment-content'+commentId).val();
+            console.log(content);
+            $.post("/comment/addReplyComment",{commentId:commentId,content:content,userId:2,avatarUrl:"../img/ncn1.jpg"},function (data) {
+                if(data.code==200){
+                    refresh();
+                }else {
+
+                }
+            });
+        });
+
+        $(document).on("click","p[id^=like]",function(e){
+            var commentId = e.target.id.replace("like","");
+            var content = $('#comment-content'+commentId).val();
+            console.log(content);
+            $.post("/comment/like",{commentId:commentId,userId:2},function (data) {
+                if(data.code==200){
+                    $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                }else {
+
+                }
+            });
+        });
+
+        Date.prototype.Format = function (fmt) {
+            var o = {
+                "M+": this.getMonth() + 1, // 月份
+                "d+": this.getDate(), // 日
+                "H+": this.getHours(), // 小时
+                "m+": this.getMinutes(), // 分
+                "s+": this.getSeconds(), // 秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+                "S": this.getMilliseconds() // 毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
+        function initComment(commentDTOs){
+            $("#accordion").html("");
+            var html ='';
+            $.each(commentDTOs,function (key,commentDTO) {
+            html += '<div class="panel panel-default ">' +
+                    '<div class="panel-body" style="padding-bottom:5px">'+
+                    '\t\t<div class="pull-left circle-avatar" style="background-image:url('+ commentDTO.avatarUrl +')"></div>\n' +
+                    '\t\t<div class="pull-left" style="clear: both !important"><span>'+  commentDTO.content  +'</span></div>\n' +
+                    '\t\t<div class="row">\n' +
+                    '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(commentDTO.createTime).Format("yyyy-MM-dd") +'</span></div>\n' +
+                    '\t\t\t<span class="pull-right">\n' +
+                    '\t\t\t\t<p class="glyphicon glyphicon-heart-empty"  id="like'+ commentDTO.id +'"></p>\n' +
+                    '\t\t\t\t<span  class="glyphicon glyphicon-pencil" data-toggle="collapse" href="#collapse'+ commentDTO.id +'" data-parent="#accordion"></span>\n' +
+                    '\t\t\t</span>\n' +
+                    '\t\t</div>\n' +
+                    '\t</div>\n' +
+                    '\t<div id="collapse'+ commentDTO.id +'" class="panel-collapse collapse">\n' +
+                    '\t\t<div class="panel-heading row">\n' +
+                    '\t\t\t<div class="input-group col-lg-12" >\n' +
+                    '\t\t\t\t<input id="comment-content'+ commentDTO.id +'"  type="text" class="form-control" style="border:none;box-shadow:none" placeholder="请输入评论">\n' +
+                    '\t\t\t\t<span class="input-group-btn">\n' +
+                    '\t\t\t\t\t<button id="reply-submit'+ commentDTO.id +'"  class="btn btn-default" style="border:none;" type="button">回复</button>\n' +
+                    '\t\t\t\t</span>\n' +
+                    '\t\t\t</div>\n' +
+                    '\t\t</div>\n' +
+                    '\t</div>\n';
+
+                    $.each(commentDTO.replies,function (key,comment) {
+                html += '\t<div class="panel-body" style="padding-bottom:5px;">\n' +
+                        '\t\t<div style="background-color: #f5f5f5;border-radius:4px;padding: 0 10px 10px;border: 1px solid hsla(0,0%,81.2%,.31);">\n' +
+                        '\t\t\t<div class="pull-left circle-avatar" style="background-image:url('+ comment.avatarUrl +')"></div>\n' +
+                        '\t\t\t<span class="pull-left" style="clear: both !important">'+ comment.content +'</span>\n' +
+                        '\t\t\t<div class="row">\n' +
+                        '\t\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(comment.createTime).Format("yyyy-MM-dd") +'</span></div>\n' +
+                        '\t\t\t\t<span class="pull-right">\n' +
+                        '\t\t\t\t\t<p class="glyphicon glyphicon-heart-empty" id="like'+ comment.id +'"></p>\n' +
+                        '\t\t\t\t</span>\n' +
+                        '\t\t\t</div>\n' +
+                        '\t\t</div>\n' +
+                        '\t</div>\n';
+                    });
+                html+='</div>';
+            });
+            $("#accordion").append(html);
+        }
+
+    </script>
 </html>

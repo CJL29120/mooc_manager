@@ -6,6 +6,7 @@ import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
 import com.chen.mooc_manager.model.dto.CourseAddDTO;
 import com.chen.mooc_manager.model.*;
+import com.chen.mooc_manager.model.dto.CourseShowDTO;
 import com.chen.mooc_manager.model.param.CourseConditionParam;
 import com.chen.mooc_manager.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -46,8 +45,11 @@ public class CourseController {
     @Autowired
     CourseService courseService;
 
-    @Resource
-    ModelMapper modelMapper;
+    @Autowired
+    SectionService sectionService;
+
+    @Autowired
+    CommentService commentService;
 
 
     @GetMapping({"/", "/index", "/index.html"})
@@ -119,18 +121,26 @@ public class CourseController {
     @PostMapping("/listBy")
     @ResponseBody
     public Results listBy(PageTableRequest request, @RequestParam(value = "condition") String con) {
-        Assert.notNull(request, "请求显示的页码参数不能为空");
+        Assert.notNull(request, "请求的页码参数不能为空");
+        Assert.notNull(con, "请求条件参数不能为空");
         CourseConditionParam condition = JSONObject.parseObject(con, CourseConditionParam.class);
-
-        List<List> list = condition.getMap();
-        Map hashMap = new HashMap();
-        list.forEach(l -> hashMap.put(l.get(0),l.get(1)));
-        log.info(hashMap.toString());
-        String orderBy = (String)hashMap.remove("orderBy");
-        String orderDirection = (String) hashMap.remove("orderDirection");
-
-        List courses = courseService.getWithCondition(hashMap,orderBy,orderDirection,request.getOffset(),request.getLimit());
-        return Results.success(courseService.countWithCondition(hashMap),courses);
+        return Results.success(courseService.countWithCondition(condition),courseService.getWithCondition(condition,request));
     }
 
+
+    @GetMapping(value = "/show")
+    public String show(Model model,@RequestParam("id")Integer id) throws RuntimeException {
+        CourseShowDTO dto = courseService.getShowDetail(id);
+
+        log.info(dto.toString());
+        model.addAttribute("course",dto);
+        return "courses/show";
+    }
+
+    @GetMapping("/study")
+    public String study(Model model){
+        model.addAttribute("section",sectionService.getById(2));
+        model.addAttribute("commentDTOs",commentService.getCommentDto(2));
+        return "courses/study";
+    }
 }
