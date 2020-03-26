@@ -6,6 +6,7 @@
     <script src="/libs/wangEditor/wangEditor.js"></script>
     <script src="/js/jquery/2.2.4/jquery.min.js"></script>
     <script src="/js/xss/xss.js"></script>
+    <script src="/js/xss/options.js"></script>
 </head>
 <body>
 <div id="editor">
@@ -20,76 +21,8 @@
 </body>
 <script>
     var E = window.wangEditor;
-    var editor = new E("#editor")
+    var editor = new E("#editor");
     editor.create();
-    var options = {
-        whiteList: {
-            a: ["target", "href", "title"],
-            abbr: ["title"],
-            address: [],
-            area: ["shape", "coords", "href", "alt"],
-            article: [],
-            aside: [],
-            audio: ["autoplay", "controls", "loop", "preload", "src"],
-            b: [],
-            bdi: ["dir"],
-            bdo: ["dir"],
-            big: [],
-            blockquote: ["cite"],
-            br: [],
-            caption: [],
-            center: [],
-            cite: [],
-            code: [],
-            col: ["align", "valign", "span", "width"],
-            colgroup: ["align", "valign", "span", "width"],
-            dd: [],
-            del: ["datetime"],
-            details: ["open"],
-            div: [],
-            dl: [],
-            dt: [],
-            em: [],
-            font: ["color", "size", "face"],
-            footer: [],
-            h1: [],
-            h2: [],
-            h3: [],
-            h4: [],
-            h5: [],
-            h6: [],
-            header: [],
-            hr: [],
-            i: [],
-            img: ["src", "alt", "title", "width", "height"],
-            ins: ["datetime"],
-            li: [],
-            mark: [],
-            nav: [],
-            ol: [],
-            p: [],
-            pre: [],
-            s: [],
-            section: [],
-            small: [],
-            span: ['style','style*'],
-            sub: [],
-            sup: [],
-            strong: [],
-            table: ["width", "border", "align", "valign"],
-            tbody: ["align", "valign"],
-            td: ["width", "rowspan", "colspan", "align", "valign"],
-            tfoot: ["align", "valign"],
-            th: ["width", "rowspan", "colspan", "align", "valign"],
-            thead: ["align", "valign"],
-            tr: ["rowspan", "align", "valign"],
-            tt: [],
-            u: [],
-            ul: [],
-            video: ["autoplay", "controls", "loop", "preload", "src", "height", "width"]
-        },
-        css:false
-    };
 
 
     $('#submit').click(function () {
@@ -111,7 +44,7 @@
     $('#get').click(function () {
         $.post("/testGet",{id:$('#htmlId').val()},function (data) {
                 if (data.code == 200) {
-                    var html = filterXSS(JSON.parse(data.data.htmlString),options)
+                    var html = filterXSS(JSON.parse(data.data.htmlString),options);
                     console.log(html)
                     $("#html").html(html);
                 } else {
@@ -120,6 +53,19 @@
             },'json'
         );
     });
+
+    var questionnaire = {userId:2,courseId:2,title:"在无动力的情况下车决不会受与整体运动方向相同的摩擦力。所以，车不会拉马走。",
+        QHtml:"<p>公布答案</p><p><span>噔噔噔噔：</span></p><p>向哪运动是由摩擦力决定，开始马受到地面的摩擦力大于车受到的方向相反的摩擦力，车就与马一起向前运动。而后只要两者的摩擦力相等，这种状况就能持续了。在无动力的情况下车决不会受与整体运动方向相同的摩擦力。所以，车不会拉马走。</p>"}
+
+    $.post("/testSendObject",{Questionnaire:JSON.stringify(questionnaire),id:888},function (data) {
+            console.log(data.code);
+            if (data.code == 200) {
+                console.log("请求发送成功！   id:"+data.data);
+            } else {
+                alert("请求失败！");
+            }
+        }
+    )
 
 </script>
 </html>

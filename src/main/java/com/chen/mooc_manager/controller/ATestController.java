@@ -1,9 +1,12 @@
 package com.chen.mooc_manager.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.chen.mooc_manager.base.result.Results;
 import com.chen.mooc_manager.dao.HtmlDao;
 import com.chen.mooc_manager.model.Html;
+import com.chen.mooc_manager.model.Questionnaire;
 import com.chen.mooc_manager.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +64,17 @@ public class ATestController {
     @ResponseBody
     public Results<Html> get_test_html(@RequestParam("id") Integer id){
         return Results.success(htmlDao.selectById(id));
+    }
+
+    @PostMapping("/testSendObject")
+    @ResponseBody
+    public Results<Questionnaire> testSendObject(@RequestParam("Questionnaire") String questionnaire,@RequestParam("id") Integer id){
+
+        Questionnaire q = JSON.parseObject(questionnaire,Questionnaire.class);
+        log.info(q.toString());
+        log.info(id+"");
+
+        return Results.success();
     }
 }
 
