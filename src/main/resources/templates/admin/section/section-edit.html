@@ -81,7 +81,8 @@
      </div>
 
      <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
-     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
+     <script type="text/javascript" src="/js/upload-js/imageUpload.js"></script>
+     <script type="text/javascript" src="/js/upload-js/videoUpload.js"></script>
      <script>
 
       layui.use(['form','layer', 'laydate'], function(){
@@ -113,11 +114,11 @@
               }
             });
 
-
           //监听提交
             form.on('submit(add)', function(data){
                 data.field.id = [[${section.id}]];
-                data.field.coverUrl = host+"/"+get_uploaded_object_name();
+                data.field.coverUrl = imageUrl;
+                data.field.videoUrl = videoUrl;
                 $.ajax({
                     url:"/section/edit",
                     type:"POST",
