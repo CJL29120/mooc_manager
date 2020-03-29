@@ -126,4 +126,11 @@ public class MoocManagerApplicationTests {
 			comment.setContent("哇，猴犀利");
 			log.info(String.valueOf(commentDao.insert(comment)));
 	}
+
+	@Test
+	public void test1(){
+		String s1 ="<p style=\"text-align: center;\"><span style=\"color: rgb(249, 150, 59);\">公布答案</span></p><p style=\"text-align: center;\"><span style=\"color: rgb(249, 150, 59);\">噔噔噔噔：</span></p><p>向哪运动是由摩擦力决定，开始马受到地面的摩擦力大于车受到的方向相反的摩擦力，车就与马一起向前运动。而后只要两者的摩擦力相等，这种状况就能持续了。在无动力的情况下车决不会受与整体运动方向相同的摩擦力。所以，车不会拉马走。</p>";
+		String s2 ="<p style=\"text-align: center;\"><span style=\"color: rgb(249, 150, 59);\">公布答案</span></p><p style=\"text-align: center;\"><span style=\"color: rgb(249, 150, 59);\">噔噔噔噔：</span></p><p>向哪运动是由摩擦力决定，开始马受到地面的摩擦力大于车受到的方向相反的摩擦力，车就与马一起向前运动。而后只要两者的摩擦力相等，这种状况就能持续了。在无动力的情况下车决不会受与整体运动方向相同的摩擦力。所以，车不会拉马走。</p>";
+		log.info(String.valueOf(s1==s2));
+	}
 }

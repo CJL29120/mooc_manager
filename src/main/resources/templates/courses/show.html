@@ -4,13 +4,15 @@
     <meta charset="utf-8">
     <title> 上课咯</title>
     <header th:replace="header::html"></header>
-
+<!--    <link rel="stylesheet"  th:href="@{/js/upload-js/style.css}"/>-->
+    <script src="/libs/wangEditor/wangEditor.js"></script>
+    <script src="/js/xss/xss.js"></script>
+    <script src="/js/xss/options.js"></script>
     <style>
-        .jumpDiv{
-
+        .modal-dialog {
+            width: 956px;
+            margin: 60px auto;
         }
-    </style>
-    <style>
         .row{
             margin-left:0px;
             margin-right:0px;
@@ -43,6 +45,36 @@
             left: 0;
             right: 0;
             bottom: 0;
+        }
+        .progress{
+            margin-top:2px;
+            width: 200px;
+            height: 14px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+        }
+        .progress-bar{
+            background-color: rgb(92, 184, 92);
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.14902) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.14902) 50%, rgba(255, 255, 255, 0.14902) 75%, transparent 75%, transparent);
+            background-size: 40px 40px;
+            box-shadow: rgba(0, 0, 0, 0.14902) 0px -1px 0px 0px inset;
+            box-sizing: border-box;
+            color: rgb(255, 255, 255);
+            display: block;
+            float: left;
+            font-size: 12px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            transition-delay: 0s;
+            transition-duration: 0.6s;
+            transition-property: width;
+            transition-timing-function: ease;
+            width: 266.188px;
         }
 
     </style>
@@ -143,15 +175,10 @@
                             <a href="#QA" class="stat-event" data-stat="course_QA" aria-controls="QA"
                                role="tab" data-toggle="tab">课程答疑(3417)</a>
                         </li>
-                        <li role="presentation">
-                            <a href="#note" class="stat-event" data-stat="course_note" aria-controls="note"
-                               role="tab" data-toggle="tab">课程笔记(3417)</a>
-                        </li>
                     </ul>
 
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="labs">
-
 
                             <div class="lab-item " th:each="section:${course.sections}">
 
@@ -172,7 +199,6 @@
 
                                 </div>
                             </div>
-
                     </div>
 
                         <div role="tabpanel" class="tab-pane course-comment" id="comments">
@@ -181,7 +207,7 @@
 
                                 </div>
                                 <div class="comment-title">最新评论</div>
-                                <div class="comment-list" id="comment-list">
+                                <div class="comment-list pre-scrollable" id="comment-list">
                                     <div class="panel panel-default ">
                                         <div class="panel-body" style="padding-bottom:5px">
                                             <div class="pull-left circle-avatar" style="background-image:url(../img/ncn1.jpg);"></div>
@@ -197,29 +223,65 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="pagination-container"></div>
+                                <div class="pagination-container">
+                                    <div class="panel-heading ">
+                                        <div class="input-group col-lg-12" >
+                                            <input id="course-comment" type="text" class="form-control" style="box-shadow:none;width:700px" placeholder="请输入评论">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default"  onclick="addComment()" type="button">回复</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="QA">
-                            <span class="lab-id active" data-lab-id="None">全部</span>
-
-                            <span class="lab-id" data-lab-id="1">第1节</span>
-
-                            <span class="lab-id" data-lab-id="2">第2节</span>
-
-                            <span class="lab-id" data-lab-id="3">第3节</span>
-
                             <div class="report-owner">
-                                <span class="owner-list" data-user-id="">我的报告</span> /
-                                <span class="owner-list active" data-user-id="None">所有报告</span>
+                                <span class="owner-list" onclick="initQuestion()">未解决</span> /
+                                <span class="owner-list" onclick="initAnswer()" >已解决</span>
                             </div>
-                            <div class="row report-items"></div>
-                            <div class="pagination-container"></div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="note">
-                            <a class="btn btn-success" data-toggle="modal" href="#askquestion" data-target="#askquestion">我要提问</a>
-                            <hr>
-                            <ul class="row question-items"></ul>
+                            <div class="row report-items">
+                                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#askquestion" onclick="editQuestionnaire()">
+                                    开始演示模态框
+                                </button>
+                                <div class="comment-list pre-scrollable" id="questionnaire-list">
+                                    <div class="panel panel-default" data-toggle="modal" data-target="#showQuestion">
+                                        <div class="panel-body" style="padding-bottom:5px">
+                                            <div class="pull-left"><h3 id="questionnaire-title-show" style="margin-top: 0px;">答疑标题</h3></div>
+                                            <span class="pull-left" style="clear: both !important">
+                                                向哪运动是由摩擦力决定，开始马受到地面的摩擦力大于车受到的方向相反的摩擦力，
+                                                车就与马一起向前运动。而后只要两者的摩擦力相等，这种状况就能持续了。在无动力的情况下车决不会受与整体运动方向相同的摩擦力。
+                                                所以，车不会拉马走。
+                                            </span>
+                                            <div class="row">
+                                                <div class="pull-left" style="clear: both !important"><span>2020-06-12 14:51</span></div>
+                                                <span class="pull-right row">
+                                                        <span class="glyphicon glyphicon-heart-empty"></span>
+                                                        <span> 1687</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel panel-default" data-toggle="modal" data-target="#showAnswer" onclick="loadQuestion('1')">
+                                        <div class="panel-body" style="padding-bottom:5px">
+                                            <div class="pull-left"><h3  style="margin-top: 0px;">答疑标题</h3></div>
+                                            <span class="pull-left" style="clear: both !important">
+                                                向哪运动是由摩擦力决定，开始马受到地面的摩擦力大于车受到的方向相反的摩擦力，
+                                                车就与马一起向前运动。而后只要两者的摩擦力相等，这种状况就能持续了。在无动力的情况下车决不会受与整体运动方向相同的摩擦力。
+                                                所以，车不会拉马走。
+                                            </span>
+                                            <div class="row">
+                                                <div class="pull-left" style="clear: both !important"><span>2020-06-12 14:51</span></div>
+                                                <span class="pull-right row">
+                                                        <span class="glyphicon glyphicon-heart-empty"></span>
+                                                        <span> 1687</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="pagination-container"></div>
                         </div>
                     </div>
@@ -263,8 +325,8 @@
     </div>
 
 
-    <div class="modal fade askquestion-modal" id="askquestion" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role=document>
+    <div class="modal fade" id="askquestion" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role=document>
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -278,8 +340,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">标题</label>
                             <div class="col-md-10">
-                                <input type="text" name="title" min="5" max="100" class="form-control" placeholder="至少输入5个字"
-                                       value="">
+                                <input type="text" id="questionnaire-title-input" name="title" min="5" max="100" class="form-control" placeholder="至少输入5个字">
                                 <span class="help-block"></span>
                             </div>
                         </div>
@@ -294,187 +355,80 @@
                                             <a href="#mkeditor-editor" role="tab" data-toggle="tab">编辑</a>
                                         </li>
                                         <li role="presentation">
-                                            <a class="mkeditor-btn-view" href="#mkeditor-viewer" role="tab"
+                                            <a class="mkeditor-btn-view" id="preview" href="#mkeditor-viewer" role="tab"
                                                data-toggle="tab">预览</a>
                                         </li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane active mkeditor-editor" id="mkeditor-editor" role="tabpanel">
-
-                                            <div class="btn-group" role="group">
-
-                                                <button type="button" class="btn btn-default mkeditor-btn-bold">
-                                                    <i class="fa fa-bold"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-default mkeditor-btn-italic">
-                                                    <i class="fa fa-italic"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-default mkeditor-btn-link">
-                                                    <i class="fa fa-link"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-default mkeditor-btn-quote">
-                                                    <i class="fa fa-quote-left"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-default mkeditor-btn-code">
-                                                    <i class="fa fa-code"></i>
-                                                </button>
-                                                <button id="mkeditor-pickfile" type="button"
-                                                        class="btn btn-default mkeditor-btn-img">
-                                                    <i class="fa fa-image"></i>
-                                                </button>
-
-                                                <button type="button" class="btn btn-default mkeditor-btn-listol">
-                                                    <i class="fa fa-list-ol"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-default mkeditor-btn-listul">
-                                                    <i class="fa fa-list-ul"></i>
-                                                </button>
+                                            <div id="toolbar"  style="border: 1px solid #ccc;">
                                             </div>
-                                            <div class="btn-group pull-right" role="group">
-                                                <a style="font-size:12px; color:#666; text-decoration:underline;"
-                                                   href="/questions/764" target="_blank">
-                                                    <i class="fa fa-question-circle"></i>Markdown 语法
-                                                </a>
+                                            <div style="padding: 5px 0; color: #ccc">
+                                                <div id="upload" class="row">
+                                                    <div>
+                                                        <div id="container" ><p id="console"></p></div>
+                                                        <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+                                                        <a id="selectfiles" href="javascript:void(0);" class='btn'>选择文件</a>
+                                                        <a id="postfiles" href="javascript:void(0);" class='btn'>开始上传</a>
+                                                    </div>
+                                                </div>
+                                                <div id="html"></div>
                                             </div>
-                                            <textarea name="content" class="content"
-                                                      min="0" max="20000"
-                                                      placeholder="推荐使用 Markdown 语法，至少输入 5 个字"></textarea>
-                                            <div class="help-block"></div>
+                                            <div id="editor">
+                                                <p>开始编辑你的问题</p>
+                                            </div>
                                         </div>
-                                        <div class="tab-pane mkeditor-viewer markdown-body" id="mkeditor-viewer"
-                                             role="tabpanel">
-                                            <div></div>
+                                        <div class="tab-pane mkeditor-viewer markdown-body" id="mkeditor-viewer" role="tabpanel">
+                                            <div id="text1"></div>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">板块</label>
-                            <div class="col-md-10">
-                                <div class="q-types" data-type="">
-                                </div>
-                            </div>
-                        </div>
-
-
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <a type="button" class="submit-question btn btn-primary" href="/vip" target="_blank"
-                       style="background:#FFFFFF;color:#00CC99;border:none;float:left;padding-left:0;"><img
-                            src="/img/senior-vip-icon.png" alt=""> 加入高级会员获得助教答疑</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="submit-question btn btn-primary" data-dismiss="modal">提交</button>
+                    <button type="button" onclick="addQuestionnaire()" class="submit-question btn btn-primary" data-dismiss="modal">提交</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="start-newlab">
-        <div class="modal-dialog">
+
+    <div class="modal fade" id="showQuestion" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role=document>
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3>开始新实验</h3>
+                    <h3>这就是你点开的问题标题</h3>
                 </div>
                 <div class="modal-body" style="text-align:center">
-                    <p> 一个实验正在进行，是否停止它，开始新实验？</p>
-
-                </div>
-                <div class="modal-footer" style="margin-top:0px">
-
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-                    <a class="btn btn-primary start-newlab-confirm">确定</a>
-
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-    <div class="modal fade" id="start-evaluation-course">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3>开始评估课实验</h3>
-                </div>
-                <div class="modal-body">
-                    <div>
-                        <p>为了让评估结果更加准确，请注意以下操作：</p>
-                        <ul>
-                            <li>完成实验后点击「停止实验」按钮</li>
-                            <li>将代码提交到代码库</li>
-                            <li>尽可能详尽的撰写实验报告</li>
-                            <li>尽可能在实验操作的关键步骤截图</li>
-                            <li>尽可能减少无用操作</li>
-                            <li>尽可能高效的利用内存/CPU资源</li>
-                        </ul>
-                        <p>评估课还在不断完善中，我们真挚希望你能通过我们提供的这个平台，找到更好的发展机会。</p>
-                    </div>
-                    <br>
-                    <div class="start-newlab"></div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-                    <a class="btn btn-primary start-confirm">确定</a>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-    <div class="modal fade" id="vip-startlab-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3>开始实验</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="start-newlab"></div>
-                    <br>
-                    <div class="text-center vip-vm">
-                        <a class="btn btn-default btn-lg newvm">创建新环境</a>
-
-                    </div>
-                    <br>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-    <div class="modal fade" id="bean-course-modal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                            class="sr-only">Close</span></button>
-                    <h4 class="modal-title">激活项目课：Linux 基础入门（新版）</h4>
-                </div>
-                <div class="modal-body">
-                    <div style="font-size:14px;">
-                        要在实验楼愉快地学习，先要熟练地使用 Linux，本实验介绍 Linux 基本操作，shell 环境下的常用命令。
-                    </div>
-                    <div style="margin:36px 0 18px; font-size:16px; font-weight:bold;">
-                        您有 <span style="color:#f66;"><strong></strong></span> 个实验豆，激活本课程需要消耗 <span
-                            style="color:#f66;"><strong>0</strong></span> 个实验豆！
-                    </div>
-                    <div style="color:#84B61A; font-size:14px; font-weight:bold;">激活后可不限次数学习本课。<a href="/faq#shiyandou"
-                                                                                                  style="font-weight:normal;"
-                                                                                                  target="_blank">如何获得实验豆？</a>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-
-                    <a class="btn btn-primary getshiyandou" href="/faq#shiyandou" target="_blank"
-                       data-dismiss="modal">获取实验豆</a>
-
+                    <p>问题答案</p>
+                    <p>很精彩</p>
                 </div>
             </div>
         </div>
     </div>
+    <div class="modal fade" id="showAnswer" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role=document>
+            <div class="modal-content">
+                <div class="modal-header" id="showAnswer-head-1">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3>这就是你点开的问题标题</h3>
+                </div>
+                <div class="modal-body" style="text-align:center">
+                    <p>问题答案</p>
+                    <p>很精彩</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 
     <div class="modal fade" id="charge-course-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
@@ -524,42 +478,11 @@
 
     <script type="text/javascript" src="/js/dest/lib/lib.js?=2016121272249"></script>
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
+    <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+    <script type="text/javascript" src="/js/upload-js/mixUpload.js"></script>
     <script type="text/javascript">
-        refresh();
-
-        function refresh(){
-            $.get("/comment/courseComment",{sectionId:"2"},function (data) {
-                if(data.code==200){
-                    initComment(data.datas);
-                }else {
-
-                }
-            });
-
-            $.get("/comment/like",{},function(data){
-                if(data.code == 200){
-                    $.each(data.datas,function (key,like) {
-                        var commentId = like.commentId;
-                        $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
-                    })
-                }
-            });
-        }
-
-
-        $(document).on("click","p[id^=like]",function(e){
-            var commentId = e.target.id.replace("like","");
-            var content = $('#comment-content'+commentId).val();
-            console.log(content);
-            $.post("/comment/like",{commentId:commentId,userId:2},function (data) {
-                if(data.code==200){
-                    $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
-                }else {
-
-                }
-            });
-        });
-
+        var E = window.wangEditor;
+        var editor = new E("#toolbar","#editor");
         Date.prototype.Format = function (fmt) {
             var o = {
                 "M+": this.getMonth() + 1, // 月份
@@ -574,26 +497,173 @@
             for (var k in o)
                 if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
+        };
+        refresh();
+
+        function loadQuestion(questionId) {
+            $("#showAnswer-head-"+questionId).html("");
+            $("#showAnswer-head-"+questionId).append("<span>&lt;iframe src='http://mooc-manager.oss-cn-shenzhen.aliyuncs.com/user-dir-prefix/hFKWMpFahN.mp4'&gt;&lt;/iframe&gt;</span>");
         }
 
-        function initComment(comments){
-            $("#comment-list").html("");
-            var html ='';
-            $.each(comments,function (key,comment) {
-                html += '<div class="panel panel-default ">' +
-                    '<div class="panel-body" style="padding-bottom:5px">'+
-                    '\t\t<div class="pull-left circle-avatar" style="background-image:url('+ comment.avatarUrl +')"></div>\n' +
-                    '\t\t<div class="pull-left" style="clear: both !important"><span>'+  comment.content  +'</span></div>\n' +
-                    '\t\t<div class="row">\n' +
-                    '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(comment.createTime).Format("yyyy-MM-dd") +'</span></div>\n' +
-                    '\t\t\t<span class="pull-right">\n' +
-                    '\t\t\t\t<p class="glyphicon glyphicon-heart-empty"  id="like'+ comment.id +'"></p>\n' +
-                    '\t\t\t</span>\n' +
-                    '\t\t</div>\n' +
-                    '\t</div>\n';
-                html+='</div>';
+        function refresh(){
+            initComment();
+            initLike();
+            // initQuestion();
+        }
+
+        function addComment(){
+            $.post("/comment/addCourseComment",{courseId:[[${course.id}]],content:$("#course-comment").val(),userId:2},function (data) {
+                if(data.code==200){
+                    $("#course-comment").val("");
+                    refresh();
+                    console.log("成功发表评论！")
+                }else {
+
+                }
             });
-            $("#comment-list").append(html);
+        }
+
+
+        function editQuestionnaire(){
+            editor.customConfig.onchange = function (html) {
+                // 监控变化，同步更新到 textarea
+                $('#text1').html(html)
+            };
+            editor.create();
+
+            document.getElementById('preview').addEventListener('click', function () {
+                // 如果未配置 editor.customConfig.onchange，则 editor.change 为 undefined
+                editor.change && editor.change()
+            })
+        }
+
+
+        function addQuestionnaire(){
+           var questionnaire = {userId:0,courseId:[[${course.id}]],title:$("#questionnaire-title-input").val(),qHtml:""};
+           var html = editor.txt.html();
+           html = filterXSS(html,options);
+           questionnaire.qHtml = html;
+
+           $.post("/questionnaire/add",{questionnaire:JSON.stringify(questionnaire)},function (data) {
+                   console.log(data.code);
+                   if (data.code == 200) {
+                       console.log("请求发送成功！");
+                   } else {
+                       alert("请求失败！");
+                   }
+               }
+           )
+        }
+
+
+        function initComment(){
+            $.get("/comment/courseComment",{sectionId:"2"},function (data) {
+                if(data.code==200){
+                    $("#comment-list").html("");
+                    var html ='';
+                    $.each(data.datas,function (key,comment) {
+                        html += '<div class="panel panel-default ">' +
+                            '<div class="panel-body" style="padding-bottom:5px">'+
+                            '\t\t<div class="pull-left circle-avatar" style="background-image:url('+ comment.avatarUrl +')"></div>\n' +
+                            '\t\t<div class="pull-left" style="clear: both !important"><span>'+  comment.content  +'</span></div>\n' +
+                            '\t\t<div class="row">\n' +
+                            '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(comment.createTime).Format("yyyy-MM-dd HH:mm") +'</span></div>\n' +
+                            '\t\t\t<span class="pull-right">\n' +
+                            '\t\t\t\t<p class="glyphicon glyphicon-heart-empty"  id="like'+comment.id+'"></p>\n' +
+                            '\t\t\t</span>\n' +
+                            '\t\t</div>\n' +
+                            '\t</div>\n';
+                        html+='</div>';
+                    });
+                    $("#comment-list").append(html);
+                }else {
+                    alert("获取评论请求失败！");
+                }
+            });
+        }
+
+        $(document).on("click","p[id^=like]",function(e){
+            var commentId = e.target.id.replace("like","");
+            var content = $('#comment-content'+commentId).val();
+            console.log(content);
+            $.post("/comment/like",{commentId:commentId,userId:2},function (data) {
+                if(data.code==200){
+                    $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                }else {
+                    alert("点赞失败");
+                }
+            });
+        });
+
+        function initLike(){
+            $.get("/comment/like",{},function(data){
+                if(data.code == 200){
+                    $.each(data.datas,function (key,like) {
+                        var commentId = like.commentId;
+                        $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                    })
+                }
+            });
+        }
+
+        function initQuestion(){
+            $.get("/questionnaire/question/list",{courseId:[[${course.id}]]},function (data) {
+               console.log(data.code);
+               if (data.code == 200) {
+                   $('#questionnaire-list').html("");
+                   var html ='';
+                   $.each(data.datas,function (key,questionnaire) {
+                       html +='<div class="panel panel-default">\n' +
+                           '\t<div class="panel-body" style="padding-bottom:5px">\n' +
+                           '\t\t<div class="pull-left"><h3 id="questionnaire-title-show" style="margin-top: 0px;">'+questionnaire.title+'</h3></div>\n' +
+                           '\t\t<span class="pull-left" style="clear: both !important">\n'
+                               + questionnaire.qhtml  +
+                           '\t\t</span>\n' +
+                           '\t\t<div class="row">\n' +
+                           '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+new Date(questionnaire.createTime).Format("yyyy-MM-dd HH:mm")+'</span></div>\n' +
+                           '\t\t\t<span class="pull-right row">\n' +
+                           '\t\t\t\t\t<span class="glyphicon glyphicon-screenshot"></span>\n' +
+                           '\t\t\t\t\t<span>' +questionnaire.followCount+'</span>\n' +
+                           '\t\t\t</span>\n' +
+                           '\t\t</div>\n' +
+                           '\t</div>\n' +
+                           '</div>';
+                   })
+                   $('#questionnaire-list').append(html);
+               } else {
+                   alert("获取答疑请求失败！");
+               }
+            })
+        }
+
+        function initAnswer(){
+            $.get("/questionnaire/answer/list",{courseId:[[${course.id}]]},function (data) {
+                console.log(data.code);
+                if (data.code == 200) {
+                    $('#questionnaire-list').html("");
+                    var html ='';
+                    $.each(data.datas,function (key,questionnaire) {
+                        html +='<div class="panel panel-default">\n' +
+                            '\t<div class="panel-body" style="padding-bottom:5px">\n' +
+                            '\t\t<div class="pull-left"><h3 id="questionnaire-title-show" style="margin-top: 0px;">'+questionnaire.title+'</h3></div>\n' +
+                            '\t\t<span class="pull-left" style="clear: both !important">\n'
+                            + questionnaire.ahtml  +
+                            '\t\t</span>\n' +
+                            '\t\t<div class="row">\n' +
+                            '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+new Date(questionnaire.createTime).Format("yyyy-MM-dd HH:mm")+'</span></div>\n' +
+                            '\t\t\t<span class="pull-right row">\n' +
+                            '\t\t\t\t\t<span class="glyphicon glyphicon-screenshot"></span>\n' +
+                            '\t\t\t\t\t<span>' +questionnaire.followCount+'</span>\n' +
+                            '\t\t\t</span>\n' +
+                            '\t\t</div>\n' +
+                            '\t</div>\n' +
+                            '</div>';
+                        $('#questionnaire-list').append(html);
+                    })
+                } else {
+                    alert("获取答疑请求失败！");
+                }
+            })
         }
 
     </script>

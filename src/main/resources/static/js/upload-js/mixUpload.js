@@ -114,29 +114,46 @@ function set_upload_param(up, filename, ret) {
     up.start();
 }
 
-function previewImage(file, callback) {//file为plupload事件监听函数参数中的file对象,callback为预览图片准备完成的回调函数
-    if (!file || !/image\//.test(file.type)) return; //确保文件是图片
-    if (file.type == 'image/gif') {//gif使用FileReader进行预览,因为mOxie.Image只支持jpg和png
-        var fr = new mOxie.FileReader();
-        fr.onload = function () {
-            callback(fr.result);
-            fr.destroy();
-            fr = null;
+function setClipText(text){
+    $(document.body).bind("copy",function(e) {
+        var clipboardData = window.clipboardData;
+        if (!clipboardData) { // for chrome
+            clipboardData = e.originalEvent.clipboardData;
         }
-        fr.readAsDataURL(file.getSource());
-    } else {
-        var preloader = new mOxie.Image();
-        preloader.onload = function () {
-            //preloader.downsize(550, 400);//先压缩一下要预览的图片,宽300，高300
-            var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
-            callback && callback(imgsrc); //callback传入的参数为预览图片的url
-            preloader.destroy();
-            preloader = null;
-        };
-        preloader.load(file.getSource());
-    }
+        clipboardData.setData('Text', text);
+        return false;
+    });
 }
+function copyFunc() {
+    document.designMode = "on";
+    document.execCommand('copy', true);
+    document.designMode = "off";
+    $("#html").html("");
+}
+function showLink() {
+    var html = "";
+    $("#html").html("");
+    iarr = ["jpg","gif","png","bmp"];
+    varr = ["mpg","m4v","mp4","flv","3gp","mov","avi","rmvb","mkv","wmv"];
+    var fileType = mixUrl.substring(mixUrl.lastIndexOf(".")+1,mixUrl.length);
 
+    $.each(iarr,function (key,value) {
+        if(fileType === value){
+            console.log(fileType);
+            setClipText(mixUrl)
+            html = '<span id="link" style=" font-size:8px;">'+mixUrl+'<a href="javascript:void(0)" onclick="copyFunc()">（点击复制）</a></span>'
+            $("#html").append(html);
+        }
+    });
+    $.each(varr,function (key,value) {
+        if(fileType === value){
+            console.log(fileType);
+            setClipText("<iframe src='"+ mixUrl +"'></iframe>");
+            html = '<span id="link" style=" font-size:8px;">&lt;iframe src="'+mixUrl+'"&gt;&lt;/iframe&gt;<a href="javascript:void(0)" onclick="copyFunc()">（点击复制）</a></span>';
+            $("#html").append(html);
+        }
+    });
+}
 var uploader = new plupload.Uploader({
     runtimes: 'html5,flash,silverlight,html4',
     browse_button: 'selectfiles',
@@ -177,9 +194,6 @@ var uploader = new plupload.Uploader({
                 document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
                     + '<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
                     + '</div>';
-                previewImage(file, function(imgSrc) {
-                    $("#upload-pc").attr("src", imgSrc);
-                });
             });
         },
 
@@ -200,6 +214,7 @@ var uploader = new plupload.Uploader({
             if (info.status == 200) {
                 mixUrl = host+"/"+get_uploaded_object_name();
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功!';
+                showLink();
             } else if (info.status == 203) {
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传到OSS成功，但是oss访问用户设置的上传回调服务器失败，失败原因是:' + info.response;
             } else {

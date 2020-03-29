@@ -52,6 +52,10 @@
                  </div>
              </div>
 
+             <div id="html"></div>
+             <textarea style="height: 100px;weight: 180px"></textarea>
+
+
              <div class="layui-form-item">
                  <button  class="layui-btn" lay-filter="add" lay-submit="">
                      创建
@@ -62,9 +66,26 @@
      </div>
 
      <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
-     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
+     <script type="text/javascript" src="/js/upload-js/mixUpload.js"></script>
 
      <script>
+
+         function setClipText(text){
+             $(document.body).bind("copy",function(e) {
+                 var clipboardData = window.clipboardData;
+                 if (!clipboardData) { // for chrome
+                     clipboardData = e.originalEvent.clipboardData;
+                 }
+                 clipboardData.setData('Text', text);
+                 return false;
+             });
+         }
+
+         function copyFunc() {
+             document.designMode = "on";
+             document.execCommand('copy', true);
+             document.designMode = "off";
+         }
       layui.use(['form','layer', 'laydate'], function(){
 
           var form = layui.form
@@ -78,13 +99,36 @@
           });
 
           form.on('submit(add)', function(data){
-              data.field.coverUrl = $('#upload-pc').attr('src');
+              var html = "";
 
-              $("#console").text(host+"/"+get_uploaded_object_name())
+              iarr = ["jpg","gif","png","bmp"];
+              varr = ["mpg","m4v","mp4","flv","3gp","mov","avi","rmvb","mkv","wmv"];
+              var fileType = mixUrl.substring(mixUrl.lastIndexOf(".")+1,mixUrl.length);
 
+
+
+              $.each(iarr,function (key,value) {
+                if(fileType === value){
+                    console.log(fileType);
+                }
+                html = mixUrl;
+              });
+              $.each(varr,function (key,value) {
+                  if(fileType === value){
+                      console.log(fileType);
+                      setClipText("<iframe src='"+ mixUrl +"'></iframe>");
+                      html = '<span>&lt;iframe src="'+mixUrl+'"&gt;&lt;/iframe&gt;</span><a href="javascript:void(0)" onclick="copyFunc()">（点击复制）</a>';
+                      $("#html").append(html);
+                  }
+              });
+
+              console.log(mixUrl);
+              $("#console").text(mixUrl);
               return false;
           });
       });
+
+
      </script>
   </body>
 </html>

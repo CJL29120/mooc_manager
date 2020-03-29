@@ -221,7 +221,7 @@
         }
 
         $("#section-submit").click(function (){
-            $.post("/comment/addSectionComment",{id:[[${section.id}]],content:$("#section-comment").val(),userId:2},function (data) {
+            $.post("/comment/addSectionComment",{sectionId:[[${section.id}]],content:$("#section-comment").val(),userId:2},function (data) {
                 if(data.code==200){
                     refresh();
                     console.log("成功发表评论！")

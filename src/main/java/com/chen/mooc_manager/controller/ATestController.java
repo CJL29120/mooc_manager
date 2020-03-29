@@ -49,6 +49,11 @@ public class ATestController {
         return "test";
     }
 
+    @GetMapping("/testZClip")
+    public String testZClip(){
+        return "testZClip";
+    }
+
 
     @PostMapping("/test")
     @ResponseBody

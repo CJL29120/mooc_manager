@@ -35,6 +35,13 @@ public class CommentController {
         return commentService.addForReply(commentId, userId, avatarUrl, content)?Results.success():Results.failure();
     }
 
+    @PostMapping(value="/addCourseComment")
+    @ResponseBody
+    public Results<Comment> addCourseComment(@RequestParam(value = "courseId",defaultValue = "2",required = false)Integer courseId, @RequestParam(value = "userId",defaultValue = "2",required = false)Integer userId,
+                                              @RequestParam(value = "avatarUrl",defaultValue = "../img/ncn1.jpg", required = false)String avatarUrl, @RequestParam(value = "content",required = false)String content){
+        return commentService.addForCourse(courseId, userId, avatarUrl, content)?Results.success():Results.failure();
+    }
+
 
     @GetMapping(value="/sectionComment")
     @ResponseBody
