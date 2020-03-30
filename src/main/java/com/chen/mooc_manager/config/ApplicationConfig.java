@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ApplicationConfig {
-    /**
-     * 分页插件
-     */
+
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();

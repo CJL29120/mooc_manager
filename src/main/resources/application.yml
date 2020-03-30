@@ -5,10 +5,18 @@ spring:
     username: root
     password: 123456
 
+  mail:
+    protocol: smtp
+    host: smtp.sina.cn #SMTP服务器地址
+    username: 17306646696@sina.cn #登陆账号
+    password: 527326120 #登陆密码（或授权码）
+    port: 25
+
   devtools:
     restart:
       enabled: true
       additional-paths: src/main/resourcse/templates
+
 
 mybatis-plus:
   type-aliases-package: com.chen.mooc_manager.model

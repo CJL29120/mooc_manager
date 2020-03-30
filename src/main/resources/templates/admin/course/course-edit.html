@@ -117,15 +117,15 @@
 
 
              <div class="layui-form-item">
-                  <button  class="layui-btn" lay-filter="add" lay-submit="">
-                    创建
+                  <button  class="layui-btn" lay-filter="edit" lay-submit="">
+                    保存
                   </button>
             </div>
 
          </form>
      </div>
      <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
-     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
+     <script type="text/javascript" src="/js/upload-js/imageUpload.js"></script>
 
      <script>
      layui.use(['form','layer','upload', 'laydate'], function(){
@@ -159,12 +159,12 @@
 
 
           //监听提交
-            form.on('submit(add)', function(data){
-                data.field.coverUrl = host.length>0 ? host+"/"+get_uploaded_object_name():'[[${course.coverUrl}]]';
+            form.on('submit(edit)', function(data){
+                data.field.coverUrl = imageUrl.length>0 ? imageUrl:'[[${course.coverUrl}]]';
 
                 $.ajax({
-                    url:"/course/edit",
                     type:"POST",
+                    url:"/course/edit",
                     data:data.field,
                     dataType:'json',
                     success:function(result){
