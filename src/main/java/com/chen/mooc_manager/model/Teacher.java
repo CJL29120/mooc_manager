@@ -21,14 +21,12 @@ import lombok.experimental.Accessors;
  * @since 2020-02-29
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Teacher extends Model<Teacher> {
+public class Teacher{
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-
     private String username;
     private String nickname;
     private String password;
@@ -49,11 +47,5 @@ public class Teacher extends Model<Teacher> {
     private int coursesCount;
     private String shortIntro;
 
-
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

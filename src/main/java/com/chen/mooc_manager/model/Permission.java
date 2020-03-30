@@ -21,8 +21,7 @@ import lombok.experimental.Accessors;
  * @since 2020-02-29
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Permission extends Model<Permission> {
+public class Permission{
 
     private static final long serialVersionUID = 1L;
 
@@ -39,10 +38,5 @@ public class Permission extends Model<Permission> {
     private Date updateTime;
     private Boolean deleted;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

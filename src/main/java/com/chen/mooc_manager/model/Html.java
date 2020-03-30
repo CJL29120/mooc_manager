@@ -19,20 +19,13 @@ import java.util.Date;
  * @since 2020-02-29
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Html extends Model<Html> {
+public class Html{
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String htmlString;
-
-/*主键值，AR模式使用*/
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
     public Integer getId() {
         return id;

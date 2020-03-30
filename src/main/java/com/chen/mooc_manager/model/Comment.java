@@ -20,8 +20,7 @@ import lombok.EqualsAndHashCode;
  * @since 2020-02-29
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Comment extends Model<Comment> {
+public class Comment{
 
     private static final long serialVersionUID = 1L;
 
@@ -37,10 +36,5 @@ public class Comment extends Model<Comment> {
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

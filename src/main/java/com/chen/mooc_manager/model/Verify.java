@@ -11,8 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Verify extends Model<Verify> {
+public class Verify{
 
     private static final long serialVersionUID = 1L;
 
@@ -28,11 +27,5 @@ public class Verify extends Model<Verify> {
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;
-
-    /*主键值，AR模式使用*/
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

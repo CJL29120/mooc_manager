@@ -23,8 +23,7 @@ import lombok.experimental.Accessors;
  * @since 2020-02-29
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Student extends Model<Student> {
+public class Student{
 
     private static final long serialVersionUID = 1L;
 
@@ -50,9 +49,4 @@ public class Student extends Model<Student> {
     private Date updateTime;
     private Boolean deleted=false;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

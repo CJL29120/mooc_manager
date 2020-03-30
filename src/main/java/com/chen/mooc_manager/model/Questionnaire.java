@@ -10,8 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Questionnaire extends Model<Questionnaire> {
+public class Questionnaire{
 
     private static final long serialVersionUID = 1L;
 
@@ -28,11 +27,5 @@ public class Questionnaire extends Model<Questionnaire> {
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;
-
-    /*主键值，AR模式使用*/
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

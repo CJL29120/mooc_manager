@@ -7,14 +7,9 @@ import lombok.ToString;
 import java.io.Serializable;
 
 @Data
-@ToString(callSuper = true)
-public class Recommend extends Model<Recommend> {
+public class Recommend{
     private Integer id;
     private Integer courseId;
     private Integer weight;
 
-    @Override
-    protected Serializable pkVal() {
-        return null;
-    }
 }
