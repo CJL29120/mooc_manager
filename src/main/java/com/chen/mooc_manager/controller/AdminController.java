@@ -8,6 +8,7 @@ import com.chen.mooc_manager.service.AdminService;
 import com.chen.mooc_manager.service.MailService;
 import com.chen.mooc_manager.util.OtherUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,8 +34,8 @@ public class AdminController {
 
     @GetMapping("/mailCode")
     @ResponseBody
-    public Results sendCode(@RequestParam("emailAddr")String emailAddr){
-        String code = OtherUtils.getRandomCode(6);
+    public Results sendCode(@RequestParam("emailAddr")String emailAddr) {
+        String code = OtherUtils.getRandomCode(4);
         cacheStore.put("code-"+emailAddr,code,2, TimeUnit.MINUTES);
         mailService.sendTextMail(emailAddr,"上课吧验证码","code:"+code);
         return Results.success();
@@ -42,14 +43,14 @@ public class AdminController {
 
     @PostMapping("/signup")
     @ResponseBody
-    public Results signup(SignupParam signupParam) throws Exception {
+    public Results signup(SignupParam signupParam){
         return adminService.signup(signupParam)?Results.success():Results.failure();
     }
 
-    @PostMapping("/login")
-    @ResponseBody
-    public Results login(@RequestParam("loginParam") LoginParam loginParam) throws Exception {
-        return Results.success();
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
     }
 
 }
