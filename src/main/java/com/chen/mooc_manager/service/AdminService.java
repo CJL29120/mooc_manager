@@ -5,7 +5,7 @@ import com.chen.mooc_manager.model.param.SignupParam;
 
 public interface AdminService {
 
-    boolean signup(SignupParam signupParam) throws Exception;
+    boolean signup(SignupParam signupParam);
 
     boolean authenticate(LoginParam loginParam);
 

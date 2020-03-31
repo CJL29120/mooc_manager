@@ -27,6 +27,7 @@ public class Role{
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+    private Integer userId;
     private String name;
     private String description;
     private Date createTime;

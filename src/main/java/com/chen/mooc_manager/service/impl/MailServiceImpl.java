@@ -1,5 +1,6 @@
 package com.chen.mooc_manager.service.impl;
 
+import com.chen.mooc_manager.exception.MailSendFailedException;
 import com.chen.mooc_manager.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ public class MailServiceImpl implements MailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendTextMail(String toAddr, String title, String content) {
+    public void sendTextMail(String toAddr, String title, String content){
         // 纯文本邮件对象
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("17306646696@sina.cn");
@@ -26,7 +27,8 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             log.info("Text邮件已经发送。");
         } catch (Exception e) {
-            log.error("发送Text邮件时发生异常！", e);
+            log.error("发送Text邮件时发生异常！",e);
+            throw new MailSendFailedException();
         }
 
     }

@@ -3,6 +3,7 @@ package com.chen.mooc_manager.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.mooc_manager.dao.StudentDao;
+import com.chen.mooc_manager.exception.AlreadyExistException;
 import com.chen.mooc_manager.model.Student;
 import com.chen.mooc_manager.service.StudentService;
 import com.chen.mooc_manager.util.ParamUtil;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ import java.util.List;
 @Slf4j
 public class StudentServiceImpl extends ServiceImpl<StudentDao, Student> implements StudentService {
 
-    @Autowired
+    @Resource
     StudentDao studentDao;
 
     @Autowired
@@ -34,13 +36,10 @@ public class StudentServiceImpl extends ServiceImpl<StudentDao, Student> impleme
     @Override
     public boolean save(Student entity) {
         entity = paramUtil.afterTrim(entity);
-        Assert.isNull(studentDao.selectOne(new QueryWrapper<Student>().lambda()
-                .eq(Student::getEmail,entity.getEmail())),
-                "该邮箱账号已经注册！");
-
-        Assert.isNull(studentDao.selectOne(new QueryWrapper<Student>().lambda()
-                        .eq(Student::getUsername,entity.getUsername())),
-                "该用户名已经注册！");
+        if(studentDao.selectOne(new QueryWrapper<Student>().lambda()
+                .eq(Student::getEmail,entity.getEmail()))==null){
+            throw new AlreadyExistException();
+        }
         return studentDao.save(entity);
     }
 

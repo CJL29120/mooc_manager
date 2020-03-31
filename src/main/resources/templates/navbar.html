@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
     <nav class="navbar navbar-default navbar-fixed-top header">
         <div class="container">
@@ -41,9 +41,19 @@
                 </ul>
 
 
-                <div class="navbar-right btns">
+                <div class="navbar-right btns" sec:authorize="!isAuthenticated()">
                     <a class="btn btn-default navbar-btn sign-in" data-sign="signin" href="#sign-modal" data-toggle="modal">登录</a>
                     <a class="btn btn-default navbar-btn sign-up" data-sign="signup" href="#sign-modal" data-toggle="modal">注册</a>
+                </div>
+
+                <div class="navbar-right " sec:authorize="isAuthenticated()">
+                    <a class="btn btn-default navbar-btn sign-in" >
+                        你好，<span  sec:authentication="name"></span>&nbsp&nbsp
+                        <form class="pull-right" th:action="@{/logout}" method="post">
+                            <input type="submit" onclick="logout()" th:value="注销登录">
+                        </form>
+                    </a>
+
                 </div>
 
                 <form class="navbar-form navbar-right" action="search" method="get" role="search">
@@ -72,7 +82,6 @@
                     </ul>
 
                     <div class="tab-content">
-
                         <div role="tabpanel" class="tab-pane active" id="signin-form">
                             <form th:action="@{/login}" method="post">
                                 <div class="form-group">
@@ -88,7 +97,7 @@
                                         <div class="input-group-addon">
                                             <i class="fa fa-lock" style="margin:0;"></i>
                                         </div>
-                                        <input type="password"  name="password" class="form-control" placeholder="请输入密码">
+                                        <input type="password"  id="password" name="password" class="form-control" placeholder="请输入密码">
                                     </div>
                                 </div>
                                 <div class="form-inline verify-code-item" style="display:none;">
@@ -124,7 +133,7 @@
                                         <div class="input-group-addon">
                                             <i class="fa fa-lock" style="margin:0;"></i>
                                         </div>
-                                        <input type="text"  name="password" id="password" class="form-control" placeholder="请输入密码">
+                                        <input type="text"  name="password" id="signup-password" class="form-control" placeholder="请输入密码">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -145,7 +154,7 @@
                                     <!-- <img class="verify-code" src="" source="https://www.shiyanlou.com/captcha.gif">-->
                                 </div>
                                 <div class="form-group">
-                                    <input class="btn btn-primary" name="submit" type="submit" onclick="signup()" value="注册">
+                                    <input class="btn btn-primary" name="submit" type="submit"  onclick="signup()" value="注册">
                                 </div>
                             </form>
                         </div>
@@ -156,10 +165,9 @@
     </div>
 
     <script>
+
         $("#submit").click(function(e) {
             e.preventDefault();
-
-
 
             $.ajax({
                 url: '/login',
@@ -168,29 +176,78 @@
                     username: $("#username").val(),
                     password: $("#password").val()
                 },
-                success:function (res) {
-                    $('#sign-modal').modal('hide');
+                success:function (datas) {
+                    if(datas.authenticated === true){
+                        localStorage.setItem("userId", datas.principal.id);
+                        localStorage.setItem("username", datas.principal.username);
+                        localStorage.setItem("nickName", datas.principal.nickname);
+                        localStorage.setItem("avatarUrl", datas.principal.avatarUrl);
+                        localStorage.setItem("authenticated", datas.principal.authenticated);
+                        var authorities = datas.authorities;
+                        var permission = [];
+                        for(var i in authorities){
+                            permission.push(authorities[i].authority);
+                        }
+                        localStorage.setItem("permission", JSON.stringify(permission));
+                        localStorage.getItem("userId");
+                        window.location.href="/";
+                        console.log("登录成功")
+                    }else{
+                        alert(datas.message)
+                    }
                 },
-                error : function(xhr) {
-                    var msg = xhr.responseText;
-                    alert(msg);
+                error: function(xhr) {
+                    var data = JSON.parse(xhr.responseText);
+                    alert(data.message);
                 }
             });
             return false;
         });
 
+        function logout() {
+            localStorage.clear();
+        }
+
         function getCode() {
-            $.get("/mailCode",{emailAddr:$("#email").val()},function (data) {
-                if(data.code==200){
-                    alert("已发送验证码，请留意你的邮箱信息")
+            $.ajax({
+                url:"/mailCode",
+                data:{emailAddr:$("#email").val()},
+                success: function(data) {
+                    if (data.code === 200) {
+                        alert("已发送验证码，请留意你的邮箱信息");
+                    }else {
+                        alert(data.message)
+                    }
+                },
+                error: function(xhr) {
+                    var data = JSON.parse(xhr.responseText);
+                    alert(data.message);
                 }
-            })
+            });
         }
 
         function signup() {
-            $.post("/signup",{email:$("#email").val(),password:$("#password").val(),repassword:$("#repassword").val(),code:$("#code").val()},function (data) {
-                if(data.code==200){
-                    alert("已发送验证码，请留意你的邮箱信息")
+            $.ajax({
+                url:"/signup",
+                type:"POST",
+                data:{
+                    email:$("#email").val(),
+                    password:$("#signup-password").val(),
+                    repassword:$("#repassword").val(),
+                    code:$("#code").val()
+                },
+                success:function (data) {
+                    if (data.code === 200) {
+                        alert("注册成功！");
+                        $("#sign-modal").hide();
+                    } else {
+                        alert(data.message);
+                        console.log("注册失败！")
+                    }
+                },
+                error:function (xhr) {
+                    var data = JSON.parse(xhr.responseText);
+                    alert(data.message);
                 }
             })
         }

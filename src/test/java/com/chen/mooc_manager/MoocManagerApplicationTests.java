@@ -3,10 +3,7 @@ package com.chen.mooc_manager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chen.mooc_manager.cache.InMemoryCacheStore;
 import com.chen.mooc_manager.cache.StringCacheStore;
-import com.chen.mooc_manager.dao.CommentDao;
-import com.chen.mooc_manager.dao.CourseDao;
-import com.chen.mooc_manager.dao.SectionDao;
-import com.chen.mooc_manager.dao.TeacherDao;
+import com.chen.mooc_manager.dao.*;
 import com.chen.mooc_manager.model.*;
 import com.chen.mooc_manager.service.CourseService;
 import com.chen.mooc_manager.service.impl.MailServiceImpl;
@@ -16,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -43,6 +41,12 @@ public class MoocManagerApplicationTests {
 
 	@Resource
 	CommentDao commentDao;
+
+	@Resource
+	StudentDao studentDao;
+
+	@Resource
+	RoleDao roleDao;
 
 	@Autowired
 	MailServiceImpl mailServiceImpl;
@@ -161,6 +165,39 @@ public class MoocManagerApplicationTests {
 
 	@Test
 	public void test2(){
-		mailServiceImpl.sendTextMail("291203136@qq.com","验证码","上课咯");
+		try {
+			mailServiceImpl.sendTextMail("291203136@qq.com","验证码","上课咯");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+
+	@Test
+	public void test3(){
+//		String s ="33@qq.com";
+//		String s ="13515@qq.com";
+		String s ="131356@qq.com";
+
+		User user = studentDao.selectOne(new QueryWrapper<Student>().lambda().eq(Student::getEmail,s));
+		if(user == null){
+		 user = teacherDao.selectOne(new QueryWrapper<Teacher>().lambda().eq(Teacher::getEmail,s));
+		}
+		user = user==null ? new User() : user;
+
+		List<Role> roles = roleDao.selectList(new QueryWrapper<Role>().lambda().eq(Role::getId,user.getId()));
+		user.setRoles(roles);
+
+		log.info(user.toString());
+	}
+
+	@Test
+	public void test4(){
+
+	    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+		log.info(encoder.encode("123456"));
+		log.info(encoder.matches("123456","$2a$10$7F0Vjhxjc4bfB8Hr2JoLTeUPKoKmcVr/V9PVNSRZXTdZ8Zfkv1i.6")+"");
+
+	}
+
 }

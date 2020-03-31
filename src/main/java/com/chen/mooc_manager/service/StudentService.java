@@ -1,6 +1,7 @@
 package com.chen.mooc_manager.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.mooc_manager.exception.MailSendFailedException;
 import com.chen.mooc_manager.model.Student;
 
 import java.util.List;
@@ -16,5 +17,5 @@ import java.util.List;
 public interface StudentService extends IService<Student> {
     List<Student> getAllUsersByPage(Integer startPosition,Integer limit);
 
-    boolean save(Student student);
+    boolean save(Student student) throws MailSendFailedException;
 }
