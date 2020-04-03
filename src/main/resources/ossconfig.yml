@@ -1,4 +1,3 @@
-
 ALIYUNCALLBACKHOST: 阿里的回调服务器地址
 myconfig.aliyun:
   accessId: ''
