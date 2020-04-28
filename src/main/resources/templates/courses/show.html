@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
     <title> 上课咯</title>
@@ -76,6 +76,14 @@
             transition-timing-function: ease;
             width: 266.188px;
         }
+        .hiddenSpan{
+            width: 100% !important;
+            height:120px !important;
+            float: left !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: normal !important;
+        }
 
     </style>
 </head>
@@ -88,17 +96,15 @@
 
         <ol class="breadcrumb">
             <li>
-                <a href="/courses/">全部课程</a>
+                <span>全部课程</span>
             </li>
 
             <li>
-                <a href="/courses/?tag=Linux">Linux</a>
+                <span th:text="${course.classifyName}"></span>
             </li>
 
             <li class="active">
-                <a href="/courses/1">
-                    Linux 基础入门（新版）
-                </a>
+                <span th:text="${course.name}"></span>
             </li>
         </ol>
 
@@ -194,7 +200,7 @@
 
                                     <a class="btn btn-default" href="#sign-modal" data-toggle="modal" data-sign="signin"
                                        data-next="/courses/1">查看文档</a>
-                                    <a class="btn btn-primary" th:href="@{'/courses/study?courseId='+${section.courseId}+'&'+'sectionId='+${section.id}}" data-toggle="modal" data-sign="signin"
+                                    <a class="btn btn-primary" th:onclick="'accessStudy('+${section.courseId}+','+${section.id}+')'" data-toggle="modal" data-sign="signin"
                                        data-next="/courses/1">开始学习</a>
 
                                 </div>
@@ -204,7 +210,11 @@
                         <div role="tabpanel" class="tab-pane course-comment" id="comments">
                             <div class="comment-box">
                                 <div class="comment-form">
-
+                                    <div class="comment-form-unlogin" sec:authorize="!isAuthenticated()">
+                                        请
+                                        <a href="#sign-modal" data-toggle="modal" data-sign="signin" data-next="/courses/1"> 登录 </a>
+                                        后发表评论
+                                    </div>
                                 </div>
                                 <div class="comment-title">最新评论</div>
                                 <div class="comment-list pre-scrollable" id="comment-list">
@@ -225,7 +235,7 @@
                                 </div>
                                 <div class="pagination-container">
                                     <div class="panel-heading ">
-                                        <div class="input-group col-lg-12" >
+                                        <div class="input-group col-lg-12" sec:authorize="isAuthenticated()">
                                             <input id="course-comment" type="text" class="form-control" style="box-shadow:none;width:700px" placeholder="请输入评论">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default"  onclick="addComment()" type="button">回复</button>
@@ -483,6 +493,7 @@
     <script type="text/javascript">
         var E = window.wangEditor;
         var editor = new E("#toolbar","#editor");
+        var userId = localStorage.getItem("userId");
         Date.prototype.Format = function (fmt) {
             var o = {
                 "M+": this.getMonth() + 1, // 月份
@@ -512,13 +523,17 @@
         }
 
         function addComment(){
-            $.post("/comment/addCourseComment",{courseId:[[${course.id}]],content:$("#course-comment").val(),userId:2},function (data) {
-                if(data.code==200){
+            $.post("/comment/addCourseComment", {
+                courseId:[[${course.id}]],
+                content:$("#course-comment").val(),
+                userId:2},function (data) {
+
+                if(data.code === 200){
                     $("#course-comment").val("");
                     refresh();
                     console.log("成功发表评论！")
                 }else {
-
+                    alert("发表评论失败")
                 }
             });
         }
@@ -544,7 +559,9 @@
            html = filterXSS(html,options);
            questionnaire.qHtml = html;
 
-           $.post("/questionnaire/add",{questionnaire:JSON.stringify(questionnaire)},function (data) {
+           $.post("/questionnaire/add",{
+               questionnaire:JSON.stringify(questionnaire)},
+               function (data) {
                    console.log(data.code);
                    if (data.code == 200) {
                        console.log("请求发送成功！");
@@ -558,9 +575,10 @@
 
         function initComment(){
             $.get("/comment/courseComment",{sectionId:"2"},function (data) {
-                if(data.code==200){
+                if(data.code === 200){
                     $("#comment-list").html("");
                     var html ='';
+
                     $.each(data.datas,function (key,comment) {
                         html += '<div class="panel panel-default ">' +
                             '<div class="panel-body" style="padding-bottom:5px">'+
@@ -586,8 +604,8 @@
             var commentId = e.target.id.replace("like","");
             var content = $('#comment-content'+commentId).val();
             console.log(content);
-            $.post("/comment/like",{commentId:commentId,userId:2},function (data) {
-                if(data.code==200){
+            $.post("/comment/like",{commentId:commentId,userId:window.localStorage.getItem("userId")},function (data) {
+                if(data.code === 200){
                     $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
                 }else {
                     alert("点赞失败");
@@ -597,7 +615,7 @@
 
         function initLike(){
             $.get("/comment/like",{},function(data){
-                if(data.code == 200){
+                if(data.code === 200){
                     $.each(data.datas,function (key,like) {
                         var commentId = like.commentId;
                         $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
@@ -616,7 +634,7 @@
                        html +='<div class="panel panel-default">\n' +
                            '\t<div class="panel-body" style="padding-bottom:5px">\n' +
                            '\t\t<div class="pull-left"><h3 id="questionnaire-title-show" style="margin-top: 0px;">'+questionnaire.title+'</h3></div>\n' +
-                           '\t\t<span class="pull-left" style="clear: both !important">\n'
+                           '\t\t<span class="pull-left hiddenSpan" style="clear: both !important">\n'
                                + questionnaire.qhtml  +
                            '\t\t</span>\n' +
                            '\t\t<div class="row">\n' +
@@ -628,7 +646,7 @@
                            '\t\t</div>\n' +
                            '\t</div>\n' +
                            '</div>';
-                   })
+                   });
                    $('#questionnaire-list').append(html);
                } else {
                    alert("获取答疑请求失败！");
@@ -664,6 +682,10 @@
                     alert("获取答疑请求失败！");
                 }
             })
+        }
+        
+        function accessStudy(courseId,sectionId) {
+            window.location.href="/course/study?courseId="+courseId+"&sectionId="+sectionId+"&userId="+localStorage.getItem("userId");
         }
 
     </script>

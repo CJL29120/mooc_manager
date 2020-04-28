@@ -36,6 +36,7 @@ public class SectionServiceImpl extends ServiceImpl<SectionDao, Section> impleme
     @Override
     public boolean add(Section section) {
         section = paramUtil.afterTrim(section);
+
         section.setUploadTime(new Date());
         return super.save(section);
     }

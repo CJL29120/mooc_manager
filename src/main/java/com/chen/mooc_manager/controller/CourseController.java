@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
+import javax.websocket.server.PathParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -111,12 +112,6 @@ public class CourseController {
         return courseService.edit(course) ? Results.success():Results.failure(course);
     }
 
-    //"/course?type=1&classifyId=4&order=4&page=1"
-    @GetMapping("")
-    public String indexByOrder(Model model) {
-        model.addAttribute("courses", courseService.list().subList(0,9));
-        return "courses/index";
-    }
 
     @PostMapping("/listBy")
     @ResponseBody
@@ -128,19 +123,20 @@ public class CourseController {
     }
 
 
-    @GetMapping(value = "/show")
+    @GetMapping("/show")
     public String show(Model model,@RequestParam("id")Integer id) throws RuntimeException {
         CourseShowDTO dto = courseService.getShowDetail(id);
-
         log.info(dto.toString());
         model.addAttribute("course",dto);
         return "courses/show";
     }
 
     @GetMapping("/study")
-    public String study(Model model){
-        model.addAttribute("section",sectionService.getById(2));
-        model.addAttribute("commentDTOs",commentService.getCommentDto(2));
+    public String study(Model model, @RequestParam("courseId") Integer courseId, @RequestParam("sectionId")Integer sectionId, @RequestParam("userId")Integer userId){
+        courseService.recordStudy(courseId, sectionId,userId);
+        model.addAttribute("section",sectionService.getById(sectionId));
+        model.addAttribute("commentDTOs",commentService.getCommentDto(sectionId));
         return "courses/study";
     }
+
 }

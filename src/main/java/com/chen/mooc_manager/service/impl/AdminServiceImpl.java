@@ -3,10 +3,12 @@ package com.chen.mooc_manager.service.impl;
 import com.chen.mooc_manager.cache.InMemoryCacheStore;
 import com.chen.mooc_manager.exception.ParamWrongException;
 import com.chen.mooc_manager.model.Student;
+import com.chen.mooc_manager.model.User;
 import com.chen.mooc_manager.model.param.LoginParam;
 import com.chen.mooc_manager.model.param.SignupParam;
 import com.chen.mooc_manager.service.AdminService;
 import com.chen.mooc_manager.service.StudentService;
+import com.chen.mooc_manager.service.UserService;
 import com.chen.mooc_manager.util.ParamUtil;
 import com.chen.mooc_manager.util.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class AdminServiceImpl implements AdminService {
     ParamUtil paramUtil;
 
     @Autowired
-    StudentService studentService;
+    UserService userService;
 
     @Resource
     InMemoryCacheStore cacheStore;
@@ -46,10 +48,10 @@ public class AdminServiceImpl implements AdminService {
 
 
         if (signupParam.getCode().equals(optionalCredential.get())) {
-            Student student = new Student();
-            student.setEmail(signupParam.getEmail());
-            student.setPassword(new BCryptPasswordEncoder().encode(signupParam.getPassword()));
-            return studentService.save(student);
+            User user = new User();
+            user.setEmail(signupParam.getEmail());
+            user.setPassword(new BCryptPasswordEncoder().encode(signupParam.getPassword()));
+            return userService.saveAsStudent(user);
         }
         throw new ParamWrongException("输入的验证码不正确");
     }

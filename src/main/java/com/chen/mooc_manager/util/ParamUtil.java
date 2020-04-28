@@ -5,9 +5,9 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 public class ParamUtil<T> {
 
+    @SuppressWarnings("unchecked")
     public T afterTrim(T entity){
         Field[] fields = entity.getClass().getDeclaredFields();
 

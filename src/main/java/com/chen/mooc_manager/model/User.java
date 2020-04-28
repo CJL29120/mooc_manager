@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private Boolean gender;
     private String avatarUrl="";
     private String email="";
-    private Boolean status;
+    private Integer status;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
     private String education="";
@@ -44,9 +44,20 @@ public class User implements UserDetails {
     private String province="";
     private String city="";
     private String ip="";
+    private Date lastLoginTime;
     private Date createTime;
     private Date updateTime;
     private Boolean deleted;
+
+    private int type;
+
+    /*学生信息*/
+    private String collegeName="";
+    private String major="";
+    /*教师信息*/
+    private String mobile;
+    private int coursesCount;
+    private String shortIntro;
 
     @TableField(exist = false)
     private List<Role> roles;
@@ -66,9 +77,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return this.status!=3; }
 
     @Override
     public boolean isCredentialsNonExpired() {

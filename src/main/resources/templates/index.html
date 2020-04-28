@@ -102,7 +102,7 @@
 
                 <div th:each="course,courseStat:${courses}">
                     <div class="col-xs-12 col-sm-6 col-md-4">
-                        <a href="paths/show.html">
+                        <a th:href="'course/show?id='+${course.id}">
                             <div class="path-item">
                                 <div class="col-xs-5 col-sm-4 path-img">
                                     <img th:src="${course.coverUrl}">
@@ -136,7 +136,7 @@
         <div class="clearfix courses">
             <div th:each="course:${vipCourses}">
                 <div class="col-md-3 col-sm-6  course">
-                    <a class="course-box" href="courses/show.html">
+                    <a class="course-box" th:href="'course/show?id='+${course.id}">
                         <div class="sign-box">
                             <i class="fa fa-star-o course-follow pull-right"
                                data-follow-url="/courses/11/follow"
@@ -165,7 +165,7 @@
 
             <div class="clearfix item-footer">
                 <div class="pull-right watch-all">
-                    <a href="courses/index.html">查看更多 ></a>
+                    <a href="course/index.html">查看更多 ></a>
                 </div>
             </div>
         </div>
@@ -188,14 +188,14 @@
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
     <script>
 
-        $("a[href^='courses/']").click(function (e) {
+        /*$("a[href^='course/']").click(function (e) {
             e.preventDefault();
             if(!localStorage.getItem("authenticated")){
                 alert("请先登录！");
             }else{
                 alert("已登录！");
             }
-        })
+        })*/
     </script>
 </body>
 </html>

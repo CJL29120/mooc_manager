@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <style>
+        .infoDiv{
+            margin-bottom: 9px;
+        }
+        .infoSpan{
+            padding: 3px 7px 6px;
+        }
+        .input-group-lg{
+            margin-bottom: 14px;
+        }
+    </style>
+</head>
+
 <body>
     <nav class="navbar navbar-default navbar-fixed-top header">
         <div class="container">
@@ -23,7 +37,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="" href="course/index.html">全部课程</a></li>
+                            <li><a class="" href="course/index">全部课程</a></li>
                             <li><a class="" href="course/index.html?status=preview">即将上线</a></li>
                         </ul>
                     </li>
@@ -33,9 +47,15 @@
                     <li class="">
                         <a href="questions/index.html">问答区</a>
                     </li>
-                    <li class=" bootcamp new-nav logo-1111">
-                        <a href="bootcamp/index.html">管理</a>
-
+                    <li class="dropdown ">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                            管理
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="" href="/admin" sec:authorize="hasRole('ROLE_admin')">后台管理</a></li>
+                            <li><a class="" href="/verifyTeacher" sec:authorize="!hasRole('ROLE_admin')">申请成为教师</a></li>
+                        </ul>
                     </li>
 
                 </ul>
@@ -48,7 +68,8 @@
 
                 <div class="navbar-right " sec:authorize="isAuthenticated()">
                     <a class="btn btn-default navbar-btn sign-in" >
-                        你好，<span  sec:authentication="name"></span>&nbsp&nbsp
+                        你好，<a href="#personalInfo-modal" data-toggle="modal" onclick="loadPersonalInfo()"><span  sec:authentication="name"></span></a>
+                        &nbsp&nbsp
                         <form class="pull-right" th:action="@{/logout}" method="post">
                             <input type="submit" onclick="logout()" th:value="注销登录">
                         </form>
@@ -164,6 +185,69 @@
         </div>
     </div>
 
+    <div class="modal fade" id="personalInfo-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="padding: 0px;">
+                <div class="modal-body" style="font-size: 20px;padding: 40px 15px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#infoList-form" aria-controls="infoList-form" role="tab" data-toggle="tab"><strong style="font-size: xx-large;">浏览</strong></a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#infoEdit-form" aria-controls="infoEdit-form" role="tab" data-toggle="tab"><strong style="font-size: xx-large;">修改</strong></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="infoList-form">
+                            <div class="panel panel-default">
+                                <div class="panel-body" id="personalInfo">
+                                    <div class="infoDiv"><span class="infoSpan">账号</span><span id="info-account" class="infoSpan">291203136</span></div>
+                                    <div class="infoDiv"><span class="infoSpan">性别</span><span id="info-gender" class="infoSpan">291203136</span></div>
+                                    <div class="infoDiv"><span class="infoSpan">邮箱</span><span id="info-email" class="infoSpan">291203136</span></div>
+                                    <div class="infoDiv"><span class="infoSpan">生日</span><span id="info-birthday" class="infoSpan">291203136</span></div>
+                                    <div><span class="infoSpan">个性签名</span></div>
+                                    <div><span class="infoSpan" id="info-sign">291203136</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="infoEdit-form">
+                            <form action="/personalInfo-update" method="post">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">账号</span>
+                                    <input type="text" class="form-control" id="input-account" aria-describedby="sizing-addon1">
+                                </div>
+                                <div class="input-group input-group-lg" style="border-radius: 0">
+                                    <span class="input-group-addon">性别</span>
+                                    <label class="radio-inline" style="padding-left: 56px;padding-top: 11px;">
+                                        <input type="radio" name="gender" value="1" checked> 男
+                                    </label>
+                                    <label class="radio-inline" style="padding-left: 56px;padding-top: 11px;">
+                                        <input type="radio" name="gender" value="0"> 女
+                                    </label>
+                                </div>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">生日</span>
+                                    <input type="date" class="form-control" id="input-birthday" placeholder="yyyy-mm-dd" aria-describedby="sizing-addon1">
+                                </div>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">邮箱</span>
+                                    <input type="email" class="form-control" id="input-email" placeholder="xxx@xxx.com" aria-describedby="sizing-addon1">
+                                </div>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">个性签名</span>
+                                    <textarea id="input-sign" style="overflow:auto;height:167px;width:inherit;"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-success pull-right" onclick="updatePersonalInfo()" style="border-radius: 6px;margin-bottom: 20px" >更新</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     <script>
 
         $("#submit").click(function(e) {
@@ -182,7 +266,7 @@
                         localStorage.setItem("username", datas.principal.username);
                         localStorage.setItem("nickName", datas.principal.nickname);
                         localStorage.setItem("avatarUrl", datas.principal.avatarUrl);
-                        localStorage.setItem("authenticated", datas.principal.authenticated);
+                        localStorage.setItem("authenticated", datas.authenticated);
                         var authorities = datas.authorities;
                         var permission = [];
                         for(var i in authorities){
@@ -190,7 +274,7 @@
                         }
                         localStorage.setItem("permission", JSON.stringify(permission));
                         localStorage.getItem("userId");
-                        window.location.href="/";
+                        window.location.reload();
                         console.log("登录成功")
                     }else{
                         alert(datas.message)
@@ -252,6 +336,55 @@
             })
         }
 
+
+
+        function loadPersonalInfo(){
+            $.get("/user/loadInfo",{userId:localStorage.getItem("userId")},function (res) {
+                var data = res.data;
+                console.log(data);
+                initPersonalInfo(data)
+
+                $("#input-account").val(data.username);
+                $("#input-birthday").val(data.birthday);
+                $("#input-email").val(data.email);
+                $("#input-sign").val(data.sign);
+                if(data.gender===true){
+                    $('input:radio[value=1]').attr("checked",true);
+                }else {
+                    $('input:radio[value=0]').attr("checked",true);
+                }
+
+            })
+        }
+
+        function updatePersonalInfo() {
+            $.post("/user/updateInfo",{
+                id:localStorage.getItem("userId"),
+                username:$('#input-account').val(),
+                gender: $('input:radio:checked').val(),
+                birthday:$('#input-birthday').val(),
+                email:$('#input-email').val(),
+                sign:$('#input-sign').val()
+            },function (data) {
+                if (data.code === 200) {
+                    loadPersonalInfo();
+                } else {
+                    alert("更新失败：\n"+data.message);
+                }
+            })
+        }
+
+        function initPersonalInfo(data){
+            $("#personalInfo").html("");
+            var html =
+            "<div class=\"infoDiv\"><span class=\"infoSpan\">账号：</span><span id=\"info-account\" class=\"infoSpan\">"+data.username+"</span></div>\n" +
+            "<div class=\"infoDiv\"><span class=\"infoSpan\">性别：</span><span id=\"info-gender\" class=\"infoSpan\">"+(data.gender===true?'男':'女')+"</span></div>\n" +
+            "<div class=\"infoDiv\"><span class=\"infoSpan\">邮箱：</span><span id=\"info-email\" class=\"infoSpan\">"+data.email+"</span></div>\n" +
+            "<div class=\"infoDiv\"><span class=\"infoSpan\">生日：</span><span id=\"info-birthday\" class=\"infoSpan\">"+data.birthday+"</span></div>\n" +
+            "<div><span class=\"infoSpan\">个性签名：</span></div>\n" +
+            "<div><span class=\"infoSpan\" id=\"info-sign\">"+"&nbsp&nbsp&nbsp"+data.sign+"</span></div>";
+            $("#personalInfo").append(html);
+        }
 
     </script>
 

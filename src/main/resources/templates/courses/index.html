@@ -163,7 +163,7 @@
     condition.map.set("orderBy","weight");
     condition.map.set("orderDirection","-1");
 
-
+    initLayPage(pageInfo,condition);
 
     function changeActive(key,value) {
         console.log(key+"-"+value)
@@ -201,9 +201,9 @@
     }
 
 
-    $(function () {
-        initLayPage(pageInfo,condition);
-    });
+
+
+
 
     /**
      * 初始化layui分页
@@ -232,7 +232,7 @@
                         }
                     }
                 });
-                if(data.count == 0){
+                if(data.count === 0){
                     $('#course-console').show();
                 }else {
                     $('#course-console').hide();

@@ -24,7 +24,6 @@ public interface CourseService extends IService<Course> {
     boolean add(Course course);
 
     boolean edit(Course course);
-
     Results<Course> getAllCoursesByPage(Integer startPosition, Integer limit);
 
     List<Course> getRecommends(Integer limit);
@@ -36,4 +35,6 @@ public interface CourseService extends IService<Course> {
     Integer countWithCondition(CourseConditionParam condition);
 
     CourseShowDTO getShowDetail(Integer courseId) throws RuntimeException;
+
+    boolean recordStudy(Integer courseId,Integer sectionId,Integer userId);
 }

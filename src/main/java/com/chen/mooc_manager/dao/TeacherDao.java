@@ -3,6 +3,8 @@ package com.chen.mooc_manager.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chen.mooc_manager.model.Teacher;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>

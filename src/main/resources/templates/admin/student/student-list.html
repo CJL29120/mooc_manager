@@ -39,8 +39,11 @@
 
                         <div class="layui-card-body ">
                             <script type="text/html" id="barDemo">
-                                <a class="layui-btn layui-btn-xs" lay-event="edit" permission="sys:user:edit">编辑</a>
-                                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" permission="sys:user:del">删除</a>
+                                {{#  if(d.status !=3){ }}
+                                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="disable" >禁用</a>
+                                {{# }else{ }}
+                                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="enable" >启用</a>
+                                {{# } }}
                             </script>
                         </div>
                     </div>
@@ -54,9 +57,8 @@
                 form = layui.form;
             table.render({
                 elem: '#table'
-                ,url: '/student/list' //数据接口
+                ,url: '/user/list' //数据接口
                 ,page: true //开启分页
-                ,toolbar: 'default'
                 ,response: {
                     countName: 'count', //规定数据总数的字段名称，默认：count
                     dataName: 'datas' //规定数据列表的字段名称，默认：data
@@ -66,15 +68,12 @@
                         {type: 'checkbox', fixed: 'left'}
                         ,{field: 'id', title: 'ID', align:'center', width:50}
                         ,{field: 'username', title: '用户名' ,width: 100}
-                        ,{field: 'nickname', title: '昵称'   ,width: 100}
                         ,{field: 'gender', title: '性别',     width: 100,
                         templet:function(d){return  d.gender == '1' ? "男":"女";}}
                         ,{field: 'avatar_url', title: '头像' ,hide:true}
-                        ,{field: 'email', title: '邮箱'      ,width: 120}
+                        ,{field: 'email', title: '邮箱'      ,width: 150}
                         ,{field: 'birthday', title: '生日'   ,width: 100}
-                        ,{field: 'collegeName', title: '大学' ,hide:true}
-                        ,{field: 'major', title: '专业'      ,hide:true}
-                        ,{field: 'sign', title: '签名'       ,hide:true}
+                        ,{field: 'sign', title: '签名'       ,width: 200}
                         ,{title: '操作', fixed: 'right', width: 134, align:'center', toolbar: '#barDemo'}
                     ]
                 ]
@@ -83,67 +82,46 @@
             //监听工具条
             table.on('tool(member)', function(obj){
                 var data = obj.data;
-                if(obj.event === 'del'){
-                    layer.confirm('真的删除么', function(index){
+                if(obj.event === 'disable'){
+                    layer.confirm('真的禁用该用户么', function(index){
                         $.ajax({
-                            url:"/student/delete",
+                            url:"/user/disable",
                             type:"POST",
                             data:{id:data.id},
                             dataType:'json',
                             success:function(result){
-                                layer.ready(function () {
-                                    layer.msg("删除成功", {icon: 1});
-                                    table.reload('table');
-                                });
+                                if(result.code === 200){
+                                    layer.ready(function () {
+                                        layer.msg("禁用成功", {icon: 1});
+                                        table.reload('table');
+                                    });
+                                }else {
+                                    layer.ready(function () {
+                                        layer.msg("请求失败", {icon: 1});
+                                    });
+                                }
                             }
                         });
                     });
-                } else if(obj.event === 'edit'){
-                    xadmin.open('编辑用户信息','/student/edit/?id='+data.id);
-                }
-            });
-
-            table.on('toolbar(member)', function(obj){
-                var checkStatus = table.checkStatus(obj.config.id)
-                    ,data = checkStatus.data; //获取选中的数据
-                console.log(data)
-                switch(obj.event){
-                    case 'add':
-                        xadmin.open('添加用户','/student/addPage');
-                        break;
-                    case 'update':
-                        if(data.length === 0){
-                            layer.msg('请选择一行');
-                        } else if(data.length > 1){
-                            layer.msg('只能同时编辑一个');
-                        } else {
-                            xadmin.open('编辑用户信息','/student/edit/?id='+data[0].id);
-                        }
-                        break;
-                    case 'delete':
-                        if(data.length === 0){
-                            layer.msg('请选择一行');
-                        } else {
-                            layer.confirm('真的删除吗',function f() {
-                                var ids = new Array(data.length);
-                                for(var j = 0; j < data.length ; j++) {
-                                    ids[j] = data[j].id;
-                                }
-                                $.ajax({
-                                    url:"/student/deleteBatch",
-                                    type:"POST",
-                                    data:{ids:ids},
-                                    dataType:'json',
-                                    success:function(result){
-                                        layer.ready(function () {
-                                            layer.msg("删除成功", {icon: 1});
-                                            table.reload('table');
-                                        });
-                                    }
+                }else if (obj.event === 'enable'){
+                    $.ajax({
+                        url:"/user/enable",
+                        type:"POST",
+                        data:{id:data.id},
+                        dataType:'json',
+                        success:function(result){
+                            if(result.code === 200){
+                                layer.ready(function () {
+                                    layer.msg("启用成功", {icon: 1});
+                                    table.reload('table');
                                 });
-                            });
+                            }else {
+                                layer.ready(function () {
+                                    layer.msg("启用失败", {icon: 1});
+                                });
+                            }
                         }
-                        break;
+                    });
                 }
             });
 
@@ -165,13 +143,14 @@
                         [ //表头
                             {type: 'checkbox', fixed: 'left'}
                             ,{field: 'id', title: 'ID', align:'center', width:50}
-                            ,{field: 'username', title: '用户名'}
-                            ,{field: 'telephone', title: '手机'}
-                            ,{field: 'status', title: '状态',  templet:function(d){
-                                return  d.status == '1' ? "启动":"禁用";
-                            }}
-                            ,{field: 'birthday', title: '生日'}
-                            ,{title:'操作', toolbar: '#barDemo' }
+                            ,{field: 'username', title: '用户名' ,width: 100}
+                            ,{field: 'gender', title: '性别',     width: 100,
+                            templet:function(d){return  d.gender == '1' ? "男":"女";}}
+                            ,{field: 'avatar_url', title: '头像' ,hide:true}
+                            ,{field: 'email', title: '邮箱'      ,width: 120}
+                            ,{field: 'birthday', title: '生日'   ,width: 100}
+                            ,{field: 'sign', title: '签名'       ,hide:true}
+                            ,{title: '操作', fixed: 'right', width: 134, align:'center', toolbar: '#barDemo'}
                         ]
                     ]
                 });

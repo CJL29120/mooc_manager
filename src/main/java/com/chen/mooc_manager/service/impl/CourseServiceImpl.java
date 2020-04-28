@@ -4,13 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
-import com.chen.mooc_manager.dao.CourseDao;
-import com.chen.mooc_manager.dao.RecommendDao;
-import com.chen.mooc_manager.dao.SectionDao;
-import com.chen.mooc_manager.dao.TeacherDao;
+import com.chen.mooc_manager.dao.*;
 import com.chen.mooc_manager.model.Course;
 import com.chen.mooc_manager.model.Section;
-import com.chen.mooc_manager.model.Teacher;
+import com.chen.mooc_manager.model.Study;
 import com.chen.mooc_manager.model.dto.CourseShowDTO;
 import com.chen.mooc_manager.model.param.CourseConditionParam;
 import com.chen.mooc_manager.service.CourseService;
@@ -46,6 +43,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements
 
     @Resource
     TeacherDao teacherDao;
+
+    @Resource
+    StudyDao studyDao;
+
+    @Resource
+    UserDao userDao;
 
     @Autowired
     ParamUtil<Course> paramUtil;
@@ -115,9 +118,19 @@ public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements
 
         List<Section> sections = sectionDao.selectList(new QueryWrapper<Section>().lambda().eq(Section::getCourseId,courseId));
         dto.setSections(sections);
-        dto.setCreator(Optional.ofNullable(teacherDao.selectById(dto.getCreatorId())).orElseThrow(() -> new RuntimeException("返回课程创建者为空")));
+        dto.setCreator(Optional.ofNullable(userDao.getTeacherById(dto.getCreatorId())).orElseThrow(() -> new RuntimeException("返回课程创建者为空")));
 
         return dto;
+    }
+
+    @Override
+    public boolean recordStudy(Integer courseId, Integer sectionId,Integer userId) {
+        Study study = new Study();
+        study.setCourseId(courseId);
+        study.setSectionId(sectionId);
+        study.setUserId(userId);
+        study.setCreateTime(new Date());
+        return studyDao.insert(study) == 1;
     }
 
 }

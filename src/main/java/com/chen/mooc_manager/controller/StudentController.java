@@ -39,8 +39,7 @@ public class StudentController {
     @Autowired
     StudentService studentService;
 
-    @Resource
-    ModelMapper modelMapper;
+
 
     @GetMapping("/addPage")
     public String addPage(Model model){

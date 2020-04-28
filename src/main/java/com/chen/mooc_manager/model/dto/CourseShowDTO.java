@@ -3,6 +3,7 @@ package com.chen.mooc_manager.model.dto;
 import com.chen.mooc_manager.model.Course;
 import com.chen.mooc_manager.model.Section;
 import com.chen.mooc_manager.model.Teacher;
+import com.chen.mooc_manager.model.User;
 import lombok.Data;
 import lombok.ToString;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @ToString(callSuper = true)
 public class CourseShowDTO extends Course {
     private List<Section> sections;
-    private Teacher creator;
+    private User creator;
 
     public List<Section> getSections() {
         return sections;
@@ -22,11 +23,11 @@ public class CourseShowDTO extends Course {
         this.sections = sections;
     }
 
-    public Teacher getCreator() {
+    public User getCreator() {
         return creator;
     }
 
-    public void setCreator(Teacher creator) {
+    public void setCreator(User creator) {
         this.creator = creator;
     }
 }
