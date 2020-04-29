@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <script type="text/javascript" src="/js/websocket/sockjs.min.js"></script>
+    <script type="text/javascript" src="/js/websocket/stomp.min.js"></script>
+    <script type="text/javascript" src="/js/websocket/nav.js"></script>
     <style>
         .infoDiv{
             margin-bottom: 9px;
@@ -12,6 +15,7 @@
             margin-bottom: 14px;
         }
     </style>
+
 </head>
 
 <body>
@@ -26,7 +30,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="/">
-                    <img src="/img/logo_03.png">
+                    <img src="/img/logo.png">
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="header-navbar-collapse">
@@ -37,15 +41,22 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="" href="course/index">全部课程</a></li>
-                            <li><a class="" href="course/index.html?status=preview">即将上线</a></li>
+                            <li><a href="course/index">全部课程</a></li>
+                            <li><a href="course/index.html?status=preview">即将上线</a></li>
                         </ul>
                     </li>
                     <li class="">
                         <a href="paths/index.html">学习计划</a>
                     </li>
-                    <li class="">
-                        <a href="questions/index.html">问答区</a>
+                    <li class="dropdown " sec:authorize="isAuthenticated()">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                            公告
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a  href="#callback-modal" data-toggle="modal">信息反馈</a></li>
+                            <li><a  href="#notice-modal" onclick="loadNotice()" data-toggle="modal">系统公告</a></li>
+                        </ul>
                     </li>
                     <li class="dropdown ">
                         <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
@@ -53,8 +64,8 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="" href="/admin" sec:authorize="hasRole('ROLE_admin')">后台管理</a></li>
-                            <li><a class="" href="/verifyTeacher" sec:authorize="!hasRole('ROLE_admin')">申请成为教师</a></li>
+                            <li><a href="/admin" sec:authorize="hasAnyRole('ROLE_admin','ROLE_teacher')">后台管理</a></li>
+                            <li><a href="/verifyTeacher" sec:authorize="!hasAnyRole('ROLE_admin','ROLE_teacher')">申请成为教师</a></li>
                         </ul>
                     </li>
 
@@ -67,21 +78,18 @@
                 </div>
 
                 <div class="navbar-right " sec:authorize="isAuthenticated()">
-                    <a class="btn btn-default navbar-btn sign-in" >
-                        你好，<a href="#personalInfo-modal" data-toggle="modal" onclick="loadPersonalInfo()"><span  sec:authentication="name"></span></a>
-                        &nbsp&nbsp
-                        <form class="pull-right" th:action="@{/logout}" method="post">
-                            <input type="submit" onclick="logout()" th:value="注销登录">
-                        </form>
-                    </a>
+                    <a class="btn btn-default navbar-btn sign-in" style="border-radius: 9px;">你好，</a>
+                    <a class="btn btn-default navbar-btn sign-in" style="border-radius: 9px;"href="#personalInfo-modal" data-toggle="modal" onclick="loadPersonalInfo()">
+                        <span  sec:authentication="name"></span></a>
+                    &nbsp&nbsp
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="">
+                            <a href="/logout" onclick="logout()">注销登录</a>
+                        </li>
+                    </ul>
 
                 </div>
 
-                <form class="navbar-form navbar-right" action="search" method="get" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="search" autocomplete="off" placeholder="搜索 课程/问答">
-                    </div>
-                </form>
             </div>
         </div>
     </nav>
@@ -110,7 +118,7 @@
                                         <div class="input-group-addon">
                                             <i class="fa fa-envelope" style="margin:0;"></i>
                                         </div>
-                                        <input type="email" id="username" name="username" class="form-control" placeholder="请输入邮箱">
+                                        <input type="email" id="login-username" name="username" class="form-control" placeholder="请输入邮箱">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -134,7 +142,7 @@
                                     <a class="pull-right" href="reset_password/index.html">忘记密码？</a>
                                 </div>
                                 <div class="form-group">
-                                    <input class="btn btn-primary"  id="submit" name="submit" type="submit" value="登录"> <!--data-dismiss="modal"-->
+                                    <input class="btn btn-primary"  id="login" type="button" value="登录"> <!--data-dismiss="modal"-->
                                 </div>
                             </form>
                         </div>
@@ -172,7 +180,6 @@
                                         </div>
                                     </div>
                                     <input class="btn btn-primary" name="sendCode" onclick="getCode()" value="获取验证码">
-                                    <!-- <img class="verify-code" src="" source="https://www.shiyanlou.com/captcha.gif">-->
                                 </div>
                                 <div class="form-group">
                                     <input class="btn btn-primary" name="submit" type="submit"  onclick="signup()" value="注册">
@@ -237,9 +244,10 @@
                                 </div>
                                 <div class="input-group input-group-lg">
                                     <span class="input-group-addon">个性签名</span>
-                                    <textarea id="input-sign" style="overflow:auto;height:167px;width:inherit;"></textarea>
+                                    <textarea id="input-sign" style="overflow:auto;height:167px;width:inherit;border-radius:6px"></textarea>
                                 </div>
-                                <button type="button" class="btn btn-success pull-right" onclick="updatePersonalInfo()" style="border-radius: 6px;margin-bottom: 20px" >更新</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="updatePersonalInfo()" style="border-radius: 6px;margin-bottom: 20px">更新</button>
+                                <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-right: 5px; border-radius: 6px;margin-bottom: 20px">Close</button>
                             </form>
                         </div>
                     </div>
@@ -248,16 +256,59 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <script>
+    <div class="modal fade" id="callback-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="padding:4px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">信息反馈</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <textarea id="callback-message" placeholder="请输入反馈信息" style="overflow:auto;height:167px;width:100%;border-radius:9px"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:0px;padding:14px;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius:9px">Close</button>
+                    <button type="button" class="btn btn-success" onclick="sendMessage()" style="border-radius:9px">发送</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
-        $("#submit").click(function(e) {
+    <div class="modal fade" id="notice-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="padding:4px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">公告信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="sidebox-body pre-scrollable" style=" max-height:384px;">
+                        <div class="panel-group" id="notice-body">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:0px;padding:14px;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius:9px">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <script>
+        $(document).ready(function (){
+            connectSocket();
+        });
+
+        $("#login").click(function(e) {
             e.preventDefault();
 
             $.ajax({
                 url: '/login',
                 type: 'post',
                 data:{
-                    username: $("#username").val(),
+                    username: $("#login-username").val(),
                     password: $("#password").val()
                 },
                 success:function (datas) {
@@ -288,7 +339,9 @@
             return false;
         });
 
+
         function logout() {
+            disconnectSocket();
             localStorage.clear();
         }
 
@@ -386,6 +439,23 @@
             $("#personalInfo").append(html);
         }
 
+        function loadNotice(){
+            $.get("/admin/getNotice",function (res) {
+                if(res.code ===200){
+                    $("#notice-body").html("");
+                    var html ='';
+                    $.each(res.datas,function (key,notice) {
+                        html += '<div class="panel panel-default ">' +
+                            '<div class="panel-body" style="padding-bottom:5px">' +
+                            '\t\t<div class="pull-left" style="clear: both !important"><span>' + notice.message + '</span></div>\n' +
+                            '<div class="pull-right" style="clear: both !important"><span>'+ notice.createTime +'</span></div>'+
+                            '</div>\n' +
+                            '</div>\n';
+                    });
+                    $("#notice-body").append(html);
+                }
+            })
+        }
     </script>
 
 </body>

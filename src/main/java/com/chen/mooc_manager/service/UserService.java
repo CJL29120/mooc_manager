@@ -26,4 +26,8 @@ public interface UserService extends IService<User> {
     boolean disbaleUserById(Integer id);
 
     boolean enbaleUserById(Integer id);
+
+    boolean addCourseCountByUserId(int creatorId);
+
+    boolean decrCourseCountByUserId(Integer delCount, Integer creatorId);
 }

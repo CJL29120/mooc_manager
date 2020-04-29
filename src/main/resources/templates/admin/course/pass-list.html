@@ -58,7 +58,8 @@
                 form = layui.form;
             table.render({
                 elem: '#table'
-                ,url: '/verify/list' //数据接口
+                ,url: '/verify/listByCreator' //数据接口
+                ,where:{creatorId:localStorage.getItem("userId")}
                 ,page: true //开启分页
                 ,toolbar: '#toolbarDemo'
                 ,response: {

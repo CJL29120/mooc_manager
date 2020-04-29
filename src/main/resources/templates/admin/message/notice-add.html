@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>发布公告</title>
+    <header th:replace="/admin/header::html"></header>
+  </head>
+
+  <body>
+     <div class="x-body">
+         <form class="layui-form">
+
+            <div class="layui-form-item">
+              <label class="layui-form-label">
+                  <span class="x-red">*</span>公告信息
+              </label>
+              <div class="layui-input-inline">
+                  <textarea id="notice-message" placeholder="请输入公告信息" style="overflow:auto;height: 167px; width:1053px;border-radius:9px;margin:20px;"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+                 <button class="layui-btn" lay-filter="add" lay-submit="" style="margin-left:42px;">发送</button>
+            </div>
+         </form>
+     </div>
+  </body>
+  <script>
+      layui.use(['form','layer'], function(){
+          var form = layui.form
+              ,layer = layui.layer
+              ,$ = layui.jquery;
+
+          //监听提交
+          form.on('submit(add)', function(data){
+              $.ajax({
+                  url:"/admin/addNotice",
+                  type:"POST",
+                  data:{message:$("#notice-message").val()},
+                  success:function(result){
+                      if(result.code === 200){
+                          layer.ready(function () {
+                              layer.msg("公告发布成功", {icon: 6});
+                              xadmin.close();
+                              xadmin.father_reload();
+                          });
+                      }else{
+                          layer.alert(result.msg);
+                      }
+                  },
+                  error:function (result) {
+                      console.log(result);
+                  }
+              });
+              return false;
+          });
+
+      });
+
+  </script>
+</html>

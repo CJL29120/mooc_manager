@@ -74,9 +74,10 @@
                         ,{field: 'name', title: '章节名'   ,width: 100}
                         ,{field: 'coverUrl',  title: '封面' , templet:'<div style=""><img width="260" src="{{d.coverUrl}}"></div>',width:160}
                         ,{field: 'videoUrl', title: '视频链接'  ,templet:function(d){return  d.videoUrl == '' ?
-                        '<div><video hidden="true"></video></div>' :
-                            '<div> <video controls="controls" style="margin-top: 10px;max-width: 260px;width: 100%;" ><source src="'+d.videoUrl+
-                            '" type="video/mp4"> </video></div>'
+                            '<div><video hidden="true"></video></div>'
+                            :
+                            '<div> <video controls="controls" style="margin-top: 10px;max-width: 260px;width: 100%;" ><source src="'
+                            + d.videoUrl + '" type="video/mp4"> </video></div>'
                         }}
                         ,{field: 'uploadTime', title: '上传时间',templet : "<div>{{layui.util.toDateString(d.uploadTime, 'yyyy年MM月dd日 HH:mm')}}</div>" ,width: 112}
                         ,{title: '操作', fixed: 'right', width: 180, align:'center', toolbar: '#barDemo'}

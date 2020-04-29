@@ -1,7 +1,9 @@
 package com.chen.mooc_manager.controller;
 
+import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
 import com.chen.mooc_manager.cache.InMemoryCacheStore;
+import com.chen.mooc_manager.model.Callback;
 import com.chen.mooc_manager.model.param.LoginParam;
 import com.chen.mooc_manager.model.param.SignupParam;
 import com.chen.mooc_manager.service.AdminService;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -53,4 +56,35 @@ public class AdminController {
         return "login";
     }
 
+    @GetMapping("/admin/getCallback")
+    @ResponseBody
+    public Results<Callback> getCallback(PageTableRequest request){
+        List<Callback> callbacks = adminService.getCallback(request.getOffset(),request.getLimit());
+        return Results.success(adminService.getCallbackCount(),callbacks);
+    }
+
+    @GetMapping("/admin/getCallbackCount")
+    @ResponseBody
+    public Results getCallbackCount(){
+        return Results.success(adminService.getCallbackCount());
+    }
+
+    @PostMapping("/admin/solveCallback")
+    @ResponseBody
+    public Results solveCallback(Integer id){
+        return Results.success(adminService.changeCallbackStatus(id));
+    }
+
+    @PostMapping("/admin/addNotice")
+    @ResponseBody
+    public Results addNotice(@RequestParam("message")String message){
+        return adminService.saveNotice(message) ? Results.success():Results.failure();
+    }
+
+    @GetMapping("/admin/getNotice")
+    @ResponseBody
+    public Results<Callback> getNotice(){
+        List<Callback> callbacks = adminService.getNotice();
+        return Results.success(callbacks);
+    }
 }

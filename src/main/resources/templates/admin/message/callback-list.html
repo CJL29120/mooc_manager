@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Friday-System</title>
+        <header th:replace="/admin/header::html"></header>
+    </head>
+    <body>
+        <div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">信息管理</a>
+            <a>
+                <cite>反馈列表</cite></a>
+          </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+                <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+        </div>
+
+        <div class="layui-fluid">
+            <div class="layui-row  layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                        </div>
+
+                        <div class="layui-card-body ">
+                            <table class="layui-hide" id="table" lay-filter="member"></table>
+                        </div>
+
+                        <div class="layui-card-body ">
+                            <script type="text/html" id="barDemo">
+                                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="resolved" >已解决</a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        layui.use(['table'], function(){
+            var table = layui.table;
+
+            table.render({
+                elem: '#table'
+                ,url: '/admin/getCallback' //数据接口
+                ,page: true //开启分页
+                ,response: {
+                    countName: 'count', //规定数据总数的字段名称，默认：count
+                    dataName: 'datas' //规定数据列表的字段名称，默认：data
+                }
+                ,cols: [
+                    [ //表头
+                        {type: 'checkbox', fixed: 'left'}
+                        ,{field: 'id', title: 'ID', align:'center', width:50}
+                        ,{field: 'userId', title: '用户名' ,width: 100}
+                        ,{field: 'message', title: '反馈信息' ,width:300}
+                        ,{field: 'createTime', title: '反馈创建时间' ,width: 150}
+                        ,{title: '操作', fixed: 'right', width: 134, align:'center', toolbar: '#barDemo'}
+                    ]
+                ]
+            });
+
+            //监听工具条
+            table.on('tool(member)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'resolved'){
+                    $.ajax({
+                        url:"/admin/solveCallback",
+                        type:"POST",
+                        data:{id:data.id},
+                        dataType:'json',
+                        success:function(result){
+                            if(result.code === 200){
+                                layer.ready(function () {
+                                    layer.msg("已标记", {icon: 1});
+                                    table.reload('table');
+                                });
+                            }else {
+                                layer.ready(function () {
+                                    layer.msg("标记失败", {icon: 1});
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+</html>

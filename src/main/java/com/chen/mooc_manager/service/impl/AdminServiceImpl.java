@@ -1,7 +1,10 @@
 package com.chen.mooc_manager.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chen.mooc_manager.cache.InMemoryCacheStore;
+import com.chen.mooc_manager.dao.CallbackDao;
 import com.chen.mooc_manager.exception.ParamWrongException;
+import com.chen.mooc_manager.model.Callback;
 import com.chen.mooc_manager.model.Student;
 import com.chen.mooc_manager.model.User;
 import com.chen.mooc_manager.model.param.LoginParam;
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +32,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     UserService userService;
+
+    @Resource
+    CallbackDao callbackDao;
 
     @Resource
     InMemoryCacheStore cacheStore;
@@ -66,5 +74,44 @@ public class AdminServiceImpl implements AdminService {
 
     public void inform(){
 
+    }
+
+    @Override
+    public boolean saveCallback(Integer userId,String message) {
+        Callback callback = new Callback();
+        callback.setUserId(userId);
+        callback.setMessage(message);
+        callback.setCreateTime(new Date());
+        return callbackDao.insert(callback) == 1;
+    }
+
+    @Override
+    public List<Callback> getCallback(Integer startPosition,Integer limit) {
+        return callbackDao.getCallback(startPosition,limit);
+    }
+
+    @Override
+    public Integer getCallbackCount() {
+        return callbackDao.getCallbackCount();
+    }
+
+    @Override
+    public Boolean changeCallbackStatus(Integer id) {
+        return callbackDao.updateCallbackStatus(id);
+    }
+
+    @Override
+    public Boolean saveNotice(String message) {
+        Callback notice = new Callback();
+        notice.setUserId(1);
+        notice.setType(3);
+        notice.setMessage(message);
+        notice.setCreateTime(new Date());
+        return callbackDao.insert(notice) == 1;
+    }
+
+    @Override
+    public List<Callback> getNotice() {
+        return callbackDao.getNotice();
     }
 }

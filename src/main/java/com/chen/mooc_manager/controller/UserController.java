@@ -2,8 +2,6 @@ package com.chen.mooc_manager.controller;
 
 import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
-import com.chen.mooc_manager.dao.UserDao;
-import com.chen.mooc_manager.model.Student;
 import com.chen.mooc_manager.model.User;
 import com.chen.mooc_manager.model.dto.UserDTO;
 import com.chen.mooc_manager.service.UserService;

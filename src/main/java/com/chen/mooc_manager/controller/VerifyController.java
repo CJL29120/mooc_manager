@@ -52,12 +52,34 @@ public class VerifyController {
         return verifyService.save(verify) ? Results.success() : Results.failure(500,"申请添加失败");
     }
 
-    @GetMapping("/list")
+    @GetMapping("/listByCreator")
     @ResponseBody
-    public Results<Verify> list(PageTableRequest request){
+    public Results<Verify> getByCreator(PageTableRequest request,@RequestParam("creatorId") Integer creatorId){
         Assert.notNull(request,"请求显示的页码参数不能为空");
-        List<Verify> verifies = verifyService.getAllChecksByPage(request.getOffset(),request.getLimit());
-        return Results.success(verifyService.count(), verifies);
+        List<Verify> verifies = verifyService.getPageByCreator(request.getOffset(),request.getLimit(),creatorId);
+        return Results.success(verifyService.getCountByCreator(creatorId), verifies);
+    }
+
+    @GetMapping("/unhandled")
+    @ResponseBody
+    public Results<Verify> getUnhandled(PageTableRequest request){
+        Assert.notNull(request,"请求显示的页码参数不能为空");
+        List<Verify> unhandled = verifyService.getUnhandledByPage(request.getOffset(),request.getLimit());
+        return Results.success(verifyService.getUnhandledCount(), unhandled);
+    }
+
+    @PostMapping("/enable")
+    @ResponseBody
+    public Results enable(@RequestParam("id")Integer id){
+        Assert.notNull(id,"审核的申请ID不能为空");
+        return verifyService.enableById(id) ? Results.success() : Results.failure(500,"审核通过失败");
+    }
+
+    @PostMapping("/disable")
+    @ResponseBody
+    public Results disable(@RequestParam("id")Integer id){
+        Assert.notNull(id,"审核的申请ID不能为空");
+        return verifyService.disableById(id) ? Results.success() : Results.failure(500,"审核不通过失败");
     }
 
     @PostMapping("/delete")

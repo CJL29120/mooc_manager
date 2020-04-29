@@ -8,6 +8,7 @@ import com.chen.mooc_manager.util.ParamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @Service
 public class VerifyServiceImpl extends ServiceImpl<VerifyDao, Verify> implements VerifyService {
-    @Autowired
+    @Resource
     VerifyDao verifyDao;
 
     @Autowired
@@ -33,7 +34,32 @@ public class VerifyServiceImpl extends ServiceImpl<VerifyDao, Verify> implements
     }
 
     @Override
-    public List<Verify> getAllChecksByPage(Integer startPosition, Integer limit) {
-        return verifyDao.getAllChecksByPage(startPosition,limit);
+    public List<Verify> getUnhandledByPage(Integer startPosition, Integer limit) {
+        return verifyDao.getUnhandledByPage(startPosition,limit);
+    }
+
+    @Override
+    public Integer getUnhandledCount() {
+        return verifyDao.getUnhandledCount();
+    }
+
+    @Override
+    public Boolean enableById(Integer id) {
+        return verifyDao.enableById(id);
+    }
+
+    @Override
+    public Boolean disableById(Integer id) {
+        return verifyDao.disableById(id);
+    }
+
+    @Override
+    public Integer getCountByCreator(Integer creatorId) {
+        return verifyDao.getCountByCreatorId(creatorId);
+    }
+
+    @Override
+    public List<Verify> getPageByCreator(Integer offset, Integer limit, Integer creatorId) {
+        return verifyDao.getPageByCreatorId(offset,limit,creatorId);
     }
 }

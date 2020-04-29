@@ -4,13 +4,12 @@ package com.chen.mooc_manager.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.chen.mooc_manager.base.result.PageTableRequest;
 import com.chen.mooc_manager.base.result.Results;
-import com.chen.mooc_manager.model.dto.CourseAddDTO;
+import com.chen.mooc_manager.model.param.CourseAddParam;
 import com.chen.mooc_manager.model.*;
 import com.chen.mooc_manager.model.dto.CourseShowDTO;
 import com.chen.mooc_manager.model.param.CourseConditionParam;
 import com.chen.mooc_manager.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.ui.Model;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
-import javax.websocket.server.PathParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +49,9 @@ public class CourseController {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    UserService userService;
+
 
     @GetMapping({"/", "/index", "/index.html"})
     public String index() {
@@ -60,7 +60,7 @@ public class CourseController {
 
 
     @GetMapping({"/addPage"})
-    public String addPage(Model model, String id) {
+    public String addPage(Model model,@RequestParam("id")Integer id) {
         Assert.notNull(id,"创建课程的审核ID不能为空");
         model.addAttribute("verify", verifyService.getById(id));
         return "admin/course/course-add";
@@ -76,9 +76,11 @@ public class CourseController {
 
     @PostMapping({"/add"})
     @ResponseBody
-    public Results<Course> add(CourseAddDTO course) {
+    public Results<Course> add(CourseAddParam course) {
+        log.info(course.toString());
         Assert.isTrue(verifyService.getById(course.getVerifyId()).getStatus() == 1, "此申请ID审核未通过，禁止创建课程");
         if(courseService.add(course) && verifyService.removeById(course.getVerifyId())){
+            userService.addCourseCountByUserId(course.getCreatorId());
             return Results.success();
         }
         return Results.failure(course);
@@ -93,9 +95,14 @@ public class CourseController {
 
     @PostMapping("deleteBatch")
     @ResponseBody
-    public Results<Course> deleteBatch(@RequestParam("ids[]") List<String> ids) {
+    public Results<Course> deleteBatch(@RequestParam("ids[]") List<String> ids,@RequestParam("creatorId")Integer creatorId) {
         Assert.notNull(ids, "删除的课程ID不能为空！");
-        return courseService.removeByIds(ids) ? Results.success() : Results.failure();
+        if (courseService.removeByIds(ids)) {
+            Integer delCount = ids.size();
+            userService.decrCourseCountByUserId(delCount,creatorId);
+            return Results.success();
+        }
+        return Results.failure();
     }
 
     @GetMapping("/editPage")

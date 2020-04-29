@@ -21,7 +21,7 @@ public interface StudentDao extends BaseMapper<Student> {
 
     @Select("select id,username,nickname,gender,avatar_url,email,birthday,education,college_name,major,sign " +
             "from student t " +
-            "order by t.id" +
+            " order by t.id" +
             " limit #{startPosition},#{limit}")
     List<Student> getAllUsersByPage(@Param("startPosition")Integer startPosition, @Param("limit")Integer limit);
 

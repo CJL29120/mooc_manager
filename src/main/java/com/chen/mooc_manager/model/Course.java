@@ -36,7 +36,7 @@ public class Course{
     private String description;
     private String coverUrl;
     private String direction;
-    private String creatorId;
+    private Integer creatorId;
     private Integer price;
     private Boolean isSale;
     private Boolean isOnline;

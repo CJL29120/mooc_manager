@@ -17,5 +17,15 @@ public interface VerifyService extends IService<Verify> {
 
     boolean save(Verify entity);
 
-    List<Verify> getAllChecksByPage(Integer startPosition, Integer limit);
+    List<Verify> getUnhandledByPage(Integer startPosition, Integer limit);
+
+    Integer getUnhandledCount();
+
+    Boolean enableById(Integer id);
+
+    Boolean disableById(Integer id);
+
+    Integer getCountByCreator(Integer creatorId);
+
+    List<Verify> getPageByCreator(Integer offset, Integer limit,Integer creatorId);
 }

@@ -80,5 +80,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserD
         return userDao.enbaleUserById(id);
     }
 
+    @Override
+    public boolean addCourseCountByUserId(int creatorId) {
+        return userDao.addCourseCountByUserId(creatorId);
+    }
+
+    @Override
+    public boolean decrCourseCountByUserId(Integer delCount, Integer creatorId) {
+        return userDao.decrCourseCountByUserId(delCount,creatorId);
+    }
+
 
 }

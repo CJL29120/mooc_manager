@@ -108,7 +108,7 @@
                                 $.ajax({
                                     url:"/course/deleteBatch",
                                     type:"POST",
-                                    data:{ids:ids},
+                                    data:{ids:ids,creatorId:localStorage.getItem("userId")},
                                     dataType:'json',
                                     success:function(result){
                                         layer.ready(function () {

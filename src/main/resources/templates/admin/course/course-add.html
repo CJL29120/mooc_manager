@@ -120,7 +120,8 @@
      </div>
 
      <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
-     <script type="text/javascript" src="/js/upload-js/upload.js"></script>
+     <script type="text/javascript" src="/js/upload-js/imageUpload.js"></script>
+
      <script>
 
       layui.use(['form','layer', 'laydate'], function(){
@@ -156,7 +157,8 @@
           //监听提交
             form.on('submit(add)', function(data){
                 data.field.coverUrl = host+"/"+get_uploaded_object_name();
-                data.field.verifyId=[[${verify.id}]];
+                data.field.verifyId = [[${verify.id}]];
+                data.field.creatorId = localStorage.getItem("userId");
                 $.ajax({
                     url:"/course/add",
                     type:"POST",

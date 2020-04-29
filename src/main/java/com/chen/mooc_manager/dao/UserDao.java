@@ -50,7 +50,11 @@ public interface UserDao extends BaseMapper<User> {
             " education,sign,province,city,last_login_time,deleted,short_intro,courses_count " +
             " from user t " +
             " where t.id = #{teacherId} and t.type = 2 ")
-    User getTeacherById(@Param("teacherId")String teacherId);
+    User getTeacherById(@Param("teacherId")Integer teacherId);
 
+    @Update(" update user u set u.courses_count=u.courses_count+1 where u.id = #{creatorId} ")
+    boolean addCourseCountByUserId(@Param("creatorId")int creatorId);
 
+    @Update(" update user u set u.courses_count=u.courses_count-#{delCount} where u.id = #{creatorId} ")
+    boolean decrCourseCountByUserId(@Param("delCount")Integer delCount,@Param("creatorId") Integer creatorId);
 }

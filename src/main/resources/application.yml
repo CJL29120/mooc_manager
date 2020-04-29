@@ -17,6 +17,8 @@ spring:
       enabled: true
       additional-paths: src/main/resourcse/templates
 
+  jackson:
+    time-zone: GMT+8
 
 mybatis-plus:
   type-aliases-package: com.chen.mooc_manager.model
