@@ -93,6 +93,14 @@ public class CourseController {
         return courseService.getAllCoursesByPage(request.getOffset(),request.getLimit());
     }
 
+    @PostMapping("/getCoursePageById")
+    @ResponseBody
+    public Results<Course> getCoursePageById(PageTableRequest request,@RequestParam("creatorId")Integer creatorId) {
+        Assert.notNull(request, "请求显示的页码参数不能为空");
+        List<Course> courses = courseService.getCoursePageById(request.getOffset(),request.getLimit(),creatorId);
+        return Results.success(courseService.getCountById(creatorId),courses);
+    }
+
     @PostMapping("deleteBatch")
     @ResponseBody
     public Results<Course> deleteBatch(@RequestParam("ids[]") List<String> ids,@RequestParam("creatorId")Integer creatorId) {

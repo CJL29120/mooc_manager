@@ -8,6 +8,7 @@ import com.chen.mooc_manager.util.ParamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -22,33 +23,35 @@ import java.util.List;
 @Service
 public class SectionServiceImpl extends ServiceImpl<SectionDao, Section> implements SectionService {
 
-    @Autowired
+    @Resource
     SectionDao sectionDao;
-
-    @Autowired
-    ParamUtil<Section> paramUtil;
-
-    @Override
-    public List<Section> getAllSectionsByPage(Integer startPosition, Integer limit) {
-        return sectionDao.getAllSectionsByPage(startPosition, limit);
-    }
 
     @Override
     public boolean add(Section section) {
-        section = paramUtil.afterTrim(section);
-
+        section.setCreateTime(new Date());
         section.setUploadTime(new Date());
+        int lastSort =  sectionDao.getMaxSort(section.getCourseId())== null?0:sectionDao.getMaxSort(section.getCourseId());
+        section.setSort(lastSort+1);
         return super.save(section);
     }
 
     @Override
     public boolean edit(Section section) {
-        section = paramUtil.afterTrim(section);
         Section old = sectionDao.selectById(section.getId());
 
         if(!old.getVideoUrl().equals(section.getVideoUrl())){
             section.setUploadTime(new Date());
         }
         return super.updateById(section);
+    }
+
+    @Override
+    public Integer getCountById(Integer courseId) {
+        return sectionDao.getCountById(courseId);
+    }
+
+    @Override
+    public List<Section> getSectionPageById(Integer offset, Integer limit, Integer courseId) {
+        return sectionDao.getSectionPageById(offset,limit,courseId);
     }
 }

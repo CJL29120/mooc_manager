@@ -134,7 +134,7 @@ function showLink() {
     var html = "";
     $("#html").html("");
     iarr = ["jpg","gif","png","bmp"];
-    varr = ["mpg","m4v","mp4","flv","3gp","mov","avi","rmvb","mkv","wmv"];
+    varr = ["mpg","m4v","mp4","MP4","flv","3gp","mov","avi","rmvb","mkv","wmv"];
     var fileType = mixUrl.substring(mixUrl.lastIndexOf(".")+1,mixUrl.length);
 
     $.each(iarr,function (key,value) {
@@ -149,7 +149,7 @@ function showLink() {
         if(fileType === value){
             console.log(fileType);
             setClipText("<iframe src='"+ mixUrl +"'></iframe>");
-            html = '<span id="link" style=" font-size:8px;">&lt;iframe src="'+mixUrl+'"&gt;&lt;/iframe&gt;<a href="javascript:void(0)" onclick="copyFunc()">（点击复制）</a></span>';
+            html = '<span id="link" style=" font-size:8px;">&lt;iframe src="'+mixUrl+'?autoplay=false"&gt;&lt;/iframe&gt;<a href="javascript:void(0)" onclick="copyFunc()">（点击复制）</a></span>';
             $("#html").append(html);
         }
     });
@@ -211,7 +211,7 @@ var uploader = new plupload.Uploader({
         },
 
         FileUploaded: function (up, file, info) {
-            if (info.status == 200) {
+            if (info.status === 200) {
                 mixUrl = host+"/"+get_uploaded_object_name();
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功!';
                 showLink();

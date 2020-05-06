@@ -19,9 +19,20 @@ import java.util.List;
 @Mapper
 public interface SectionDao extends BaseMapper<Section> {
 
-    @Select("select id,section_id,name,cover_url,video_url,upload_time " +
+    @Select(" select count(t.id) " +
             " from section t " +
+            " where t.course_id = #{courseId}")
+    Integer getCountById(@Param("courseId")Integer courseId);
+
+    @Select(" select id,sort,course_id,name,cover_url,video_url,upload_time " +
+            " from section t " +
+            " where t.course_id = #{courseId}" +
             " order by t.create_time " +
             " limit #{startPosition},#{limit}")
-    List<Section> getAllSectionsByPage(@Param("startPosition") Integer startPosition, @Param("limit") Integer limit);
+    List<Section> getSectionPageById(@Param("startPosition") Integer startPosition, @Param("limit") Integer limit,@Param("courseId")Integer courseId);
+
+    @Select(" select max(sort) " +
+            " from section t " +
+            " where t.course_id = #{courseId}")
+    Integer getMaxSort(Integer courseId);
 }

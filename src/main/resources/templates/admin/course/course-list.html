@@ -37,6 +37,7 @@
                         <div class="layui-card-body ">
                             <script type="text/html" id="barDemo">
                                 <a class="layui-btn layui-btn-xs" lay-event="courseEdit" >编辑课程</a>
+                                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="sectionManage" >章节管理</a>
                             </script>
                         </div>
                     </div>
@@ -54,7 +55,8 @@
             var table = layui.table;
             table.render({
                 elem: '#table'
-                ,url: '/course/list' //数据接口
+                ,url: '/course/getCoursePageById' //数据接口
+                ,where:{creatorId:localStorage.getItem("userId")}
                 ,method: 'POST'
                 ,page: true //开启分页
                 ,toolbar: '#toolbarDemo'
@@ -88,6 +90,8 @@
                 var data = obj.data;
                 if(obj.event === 'courseEdit'){
                     xadmin.open('编辑课程','/course/editPage/?id='+data.id);
+                }else if(obj.event === 'sectionManage'){
+                    parent.xadmin.add_tab('章节管理','/section/listPage/?courseId='+data.id)
                 }
             });
 

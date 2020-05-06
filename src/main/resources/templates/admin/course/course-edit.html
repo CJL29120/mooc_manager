@@ -43,7 +43,7 @@
 
                  <div class="layui-form-item layui-hide">
                      <label for="C_price" class="layui-form-label">
-                         <span class="x-red">*</span>积分（类型选择了积分就显示）
+                         <span class="x-red">*</span>积分
                      </label>
                      <div class="layui-input-inline" >
                          <input class="layui-input" type="text" id="C_price" th:value="${course.price}"  name="price" autocomplete="off" >
@@ -56,14 +56,14 @@
                  </div>
 
                  <label for="C_classify" class="layui-form-label">
-                     <span class="x-red">*</span>课程分类 //从数据库分类表取出所有
+                     <span class="x-red">*</span>课程分类
                  </label>
                  <div class="layui-input-inline">
                      <select  id="C_classify" lay-filter="classifyId"  name="classifyId">
                          <option value=""></option>
-                         <option value="0">金融</option>
                          <option value="1" selected="">艺术</option>
                          <option value="2">哲学</option>
+                         <option value="3">外语</option>
                      </select>
                  </div>
 <!--

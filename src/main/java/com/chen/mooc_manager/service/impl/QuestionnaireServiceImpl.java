@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.mooc_manager.dao.QuestionnaireDao;
 import com.chen.mooc_manager.model.Questionnaire;
 import com.chen.mooc_manager.model.Verify;
+import com.chen.mooc_manager.model.dto.QuestionnaireDTO;
 import com.chen.mooc_manager.service.QuestionnaireService;
 import com.chen.mooc_manager.util.ParamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ public class QuestionnaireServiceImpl extends ServiceImpl<QuestionnaireDao, Ques
 
     @Override
     public boolean save(Questionnaire questionnaire){
-        questionnaire = paramUtil.afterTrim(questionnaire);
         questionnaire.setCreateTime(new Date());
         return super.save(questionnaire);
     }
@@ -45,6 +45,21 @@ public class QuestionnaireServiceImpl extends ServiceImpl<QuestionnaireDao, Ques
     @Override
     public List<Questionnaire> getAnswer(Integer courseId) {
         return questionnaireDao.getAnswer(courseId);
+    }
+
+    @Override
+    public List<QuestionnaireDTO> getQuestionnairePageById(Integer offset, Integer limit, Integer teacherId) {
+        return questionnaireDao.getQuestionnairePageById(offset,limit,teacherId);
+    }
+
+    @Override
+    public Integer getCountById(Integer teacherId) {
+        return questionnaireDao.getCountById(teacherId);
+    }
+
+    @Override
+    public Boolean saveAnswer(Integer id, String ahtml) {
+        return questionnaireDao.saveAnswer(id,ahtml);
     }
 
 }

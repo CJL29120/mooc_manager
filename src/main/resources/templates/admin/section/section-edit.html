@@ -117,8 +117,12 @@
           //监听提交
             form.on('submit(add)', function(data){
                 data.field.id = [[${section.id}]];
-                data.field.coverUrl = imageUrl;
-                data.field.videoUrl = videoUrl;
+                if(imageUrl.length>5){
+                    data.field.coverUrl = imageUrl;
+                }
+                if (videoUrl.length>5) {
+                    data.field.videoUrl = videoUrl;
+                }
                 $.ajax({
                     url:"/section/edit",
                     type:"POST",

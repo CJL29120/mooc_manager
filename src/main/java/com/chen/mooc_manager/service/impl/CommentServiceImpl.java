@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
         comment.setUserId(userId);
         comment.setAvatarUrl(avatarUrl);
         comment.setContent(content);
+        comment.setCreateTime(new Date());
         return commentDao.insert(comment) == 1;
     }
 
@@ -68,6 +70,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
         comment.setUserId(userId);
         comment.setAvatarUrl(avatarUrl);
         comment.setContent(content);
+        comment.setCreateTime(new Date());
         return commentDao.insert(comment) == 1;
     }
 
@@ -84,6 +87,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
         comment.setUserId(userId);
         comment.setAvatarUrl(avatarUrl);
         comment.setContent(content);
+        comment.setCreateTime(new Date());
         return commentDao.insert(comment) == 1;
     }
 

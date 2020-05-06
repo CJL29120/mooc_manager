@@ -78,7 +78,7 @@
         }
         .hiddenSpan{
             width: 100% !important;
-            height:120px !important;
+            height:140px !important;
             float: left !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
@@ -122,14 +122,6 @@
                             <span th:text="${course.name}"></span>
 
                         </h4>
-                        <div class="pull-right course-infobox-follow"
-                             data-follow-url="/courses/1/follow"
-                             data-unfollow-url="/courses/1/unfollow">
-                            <span class="course-infobox-followers" th:text="${course.followerCount}">4401</span>
-                            <span>人关注</span>
-
-                            <i class="fa fa-star-o" data-next="/login?next=%2Fcourses%2F1"></i>
-                        </div>
                     </div>
 
                     <div class="clearfix course-infobox-body">
@@ -175,34 +167,30 @@
 
                         <li role="presentation">
                             <a href="#comments" class="stat-event" aria-controls="comments" role="tab"
-                               data-stat="course_comment" data-toggle="tab">课程评价(1194)</a>
+                               data-stat="course_comment" data-toggle="tab">课程评价</a>
                         </li>
                         <li role="presentation">
                             <a href="#QA" class="stat-event" data-stat="course_QA" aria-controls="QA"
-                               role="tab" data-toggle="tab">课程答疑(3417)</a>
+                               role="tab" data-toggle="tab">课程答疑</a>
                         </li>
                     </ul>
 
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="labs">
-
-                            <div class="lab-item " th:each="section:${course.sections}">
-
-                                <div class="jumpDiv" th:data-bind="${section.sectionId}"> </div>
-                                <div class="lab-item-status">
-                                    <img src="/img/lab-not-ok.png">
+                            <div class="comment-form">
+                                <div class="comment-form-unlogin" sec:authorize="!isAuthenticated()">
+                                    <a href="#sign-modal" data-toggle="modal" data-sign="signin" data-next="/courses/1"> 登录 </a>
+                                    后方可开始课程学习
                                 </div>
-                                <div class="lab-item-index" th:text="${section.sectionId}">第2节</div>
+                            </div>
+                            <div class="lab-item " th:each="section:${course.sections}">
+                                <div class="jumpDiv" th:data-bind="${section.sort}"> </div>
+                                <div class="lab-item-index" th:text="${section.sort}">第2节</div>
                                 <div class="lab-item-title" data-toggle="tooltip" data-placement="bottom"
                                      th:text="${section.name}">基本概念及操作</div>
 
-                                <div class="pull-right lab-item-ctrl">
-
-                                    <a class="btn btn-default" href="#sign-modal" data-toggle="modal" data-sign="signin"
-                                       data-next="/courses/1">查看文档</a>
-                                    <a class="btn btn-primary" th:onclick="'accessStudy('+${section.courseId}+','+${section.id}+')'" data-toggle="modal" data-sign="signin"
-                                       data-next="/courses/1">开始学习</a>
-
+                                <div class="pull-right lab-item-ctrl" sec:authorize="isAuthenticated()">
+                                    <a class="btn btn-primary" th:onclick="'accessStudy('+${section.courseId}+','+${section.id}+')'" style="border-radius: 3px">开始学习</a>
                                 </div>
                             </div>
                     </div>
@@ -251,9 +239,17 @@
                                 <span class="owner-list" onclick="initAnswer()" >已解决</span>
                             </div>
                             <div class="row report-items">
-                                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#askquestion" onclick="editQuestionnaire()">
-                                    开始演示模态框
-                                </button>
+                                <div class="comment-form-unlogin" sec:authorize="!isAuthenticated()">
+                                    请
+                                    <a href="#sign-modal" data-toggle="modal" data-sign="signin" data-next="/courses/1"> 登录 </a>
+                                    后创建答疑问题
+                                </div>
+                                <div class="comment-form-unlogin" sec:authorize="isAuthenticated()">
+                                    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#askquestion" onclick="editQuestionnaire()" style="border-radius:21px;margin-bottom: 10px">
+                                        编辑答疑问题
+                                    </button>
+                                </div>
+
                                 <div class="comment-list pre-scrollable" id="questionnaire-list">
                                     <div class="panel panel-default" data-toggle="modal" data-target="#showQuestion">
                                         <div class="panel-body" style="padding-bottom:5px">
@@ -301,7 +297,7 @@
             <div class="col-md-3 layout-side">
 
                 <div class="side-image side-image-pc">
-                    <img src="/img/ncn1.jpg?imageView2/0/h/300">
+                    <img th:src="${course.coverUrl}">
                 </div>
 
 
@@ -323,9 +319,6 @@
                                 资深程序员,5年Linux运维、企业级开发经验及数据库实战和教学经验.
                             </div>
                         </div>
-                    </div>
-                    <div class="sidebox-footer mooc-footer">
-                        <a href="/teacher/20406" target="_blank">查看老师的所有课程 ></a>
                     </div>
                 </div>
 
@@ -412,11 +405,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3>这就是你点开的问题标题</h3>
+                    <h3 id="showQuestion-title">这就是你点开的问题标题</h3>
                 </div>
-                <div class="modal-body" style="text-align:center">
-                    <p>问题答案</p>
-                    <p>很精彩</p>
+                <div class="modal-body" id="showQuestion-content" >
+                        请
+                        <a href="#sign-modal" data-toggle="modal" data-sign="signin" data-dismiss="modal" data-next="/courses/1"> 登录 </a>
+                        后再浏览答疑
                 </div>
             </div>
         </div>
@@ -424,11 +418,11 @@
     <div class="modal fade" id="showAnswer" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role=document>
             <div class="modal-content">
-                <div class="modal-header" id="showAnswer-head-1">
+                <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3>这就是你点开的问题标题</h3>
+                    <h3 id="showAnswer-title">这就是你点开的问题标题</h3>
                 </div>
-                <div class="modal-body" style="text-align:center">
+                <div class="modal-body"  id="showAnswer-content" >
                     <p>问题答案</p>
                     <p>很精彩</p>
                 </div>
@@ -436,53 +430,6 @@
         </div>
     </div>
 
-
-
-
-
-    <div class="modal fade" id="charge-course-modal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-                    <h4 class="modal-title">课程报名</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="row form-horizontal">
-                        <input name="_csrf_token" type=hidden value="1483794941##be4fb68b276c5f7cb970936cb25985cd53b943d1">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">邮箱</label>
-                            <div class="col-md-10">
-                                <input type="email" class="form-control" name="email" value="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">手机号码</label>
-                            <div class="col-md-10">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="phone_no">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default charge-course-phone-code" type="button"
-                                                style="padding:7px 12px;">获取验证码</button>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">验证码</label>
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="verify_code">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary charge-course-confirm">确定</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <footer th:replace="footer::html"></footer>
 
@@ -491,9 +438,6 @@
     <script type="text/javascript" src="/js/upload-js/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
     <script type="text/javascript" src="/js/upload-js/mixUpload.js"></script>
     <script type="text/javascript">
-        var E = window.wangEditor;
-        var editor = new E("#toolbar","#editor");
-        var userId = localStorage.getItem("userId");
         Date.prototype.Format = function (fmt) {
             var o = {
                 "M+": this.getMonth() + 1, // 月份
@@ -509,35 +453,9 @@
                 if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
         };
-        refresh();
-
-        function loadQuestion(questionId) {
-            $("#showAnswer-head-"+questionId).html("");
-            $("#showAnswer-head-"+questionId).append("<span>&lt;iframe src='http://mooc-manager.oss-cn-shenzhen.aliyuncs.com/user-dir-prefix/hFKWMpFahN.mp4'&gt;&lt;/iframe&gt;</span>");
-        }
-
-        function refresh(){
-            initComment();
-            initLike();
-            // initQuestion();
-        }
-
-        function addComment(){
-            $.post("/comment/addCourseComment", {
-                courseId:[[${course.id}]],
-                content:$("#course-comment").val(),
-                userId:2},function (data) {
-
-                if(data.code === 200){
-                    $("#course-comment").val("");
-                    refresh();
-                    console.log("成功发表评论！")
-                }else {
-                    alert("发表评论失败")
-                }
-            });
-        }
-
+        var E = window.wangEditor;
+        var editor = new E("#toolbar","#editor");
+        var userId = localStorage.getItem("userId");
 
         function editQuestionnaire(){
             editor.customConfig.onchange = function (html) {
@@ -552,9 +470,42 @@
             })
         }
 
+        refresh();
+
+        function loadQuestion(questionId) {
+            $("#showAnswer-head-"+questionId).html("");
+            $("#showAnswer-head-"+questionId).append("<span>&lt;iframe src='http://mooc-manager.oss-cn-shenzhen.aliyuncs.com/user-dir-prefix/hFKWMpFahN.mp4'&gt;&lt;/iframe&gt;</span>");
+        }
+
+        function refresh(){
+            initComment();
+            initLike();
+            initQuestion();
+        }
+
+        function addComment(){
+            $.post("/comment/addCourseComment",
+                {
+                courseId:[[${course.id}]],
+                content:$("#course-comment").val(),
+                userId:userId
+                }
+                ,function (data) {
+                    if(data.code === 200){
+                        $("#course-comment").val("");
+                        refresh();
+                        console.log("成功发表评论！")
+                    }else {
+                        alert("发表评论失败")
+                    }
+                }
+            );
+        }
+
+
 
         function addQuestionnaire(){
-           var questionnaire = {userId:0,courseId:[[${course.id}]],title:$("#questionnaire-title-input").val(),qHtml:""};
+           var questionnaire = {userId:userId,courseId:[[${course.id}]],title:$("#questionnaire-title-input").val(),qHtml:""};
            var html = editor.txt.html();
            html = filterXSS(html,options);
            questionnaire.qHtml = html;
@@ -565,8 +516,9 @@
                    console.log(data.code);
                    if (data.code == 200) {
                        console.log("请求发送成功！");
+                       initQuestion();
                    } else {
-                       alert("请求失败！");
+                       alert("答疑创建请求失败！");
                    }
                }
            )
@@ -574,13 +526,13 @@
 
 
         function initComment(){
-            $.get("/comment/courseComment",{sectionId:"2"},function (data) {
+            $.get("/comment/courseComment",{courseId:[[${course.id}]]},function (data) {
                 if(data.code === 200){
                     $("#comment-list").html("");
                     var html ='';
 
                     $.each(data.datas,function (key,comment) {
-                        html += '<div class="panel panel-default ">' +
+                        html += '<div class="panel panel-default " >' +
                             '<div class="panel-body" style="padding-bottom:5px">'+
                             '\t\t<div class="pull-left circle-avatar" style="background-image:url('+ comment.avatarUrl +')"></div>\n' +
                             '\t\t<div class="pull-left" style="clear: both !important"><span>'+  comment.content  +'</span></div>\n' +
@@ -620,6 +572,8 @@
                         var commentId = like.commentId;
                         $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
                     })
+                }else{
+                    alert("点赞初始化失败！");
                 }
             });
         }
@@ -631,7 +585,7 @@
                    $('#questionnaire-list').html("");
                    var html ='';
                    $.each(data.datas,function (key,questionnaire) {
-                       html +='<div class="panel panel-default">\n' +
+                       html +='<div class="panel panel-default" data-toggle="modal" data-target="#showQuestion" id="Question-panel-'+ questionnaire.id +'">\n' +
                            '\t<div class="panel-body" style="padding-bottom:5px">\n' +
                            '\t\t<div class="pull-left"><h3 id="questionnaire-title-show" style="margin-top: 0px;">'+questionnaire.title+'</h3></div>\n' +
                            '\t\t<span class="pull-left hiddenSpan" style="clear: both !important">\n'
@@ -640,7 +594,7 @@
                            '\t\t<div class="row">\n' +
                            '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+new Date(questionnaire.createTime).Format("yyyy-MM-dd HH:mm")+'</span></div>\n' +
                            '\t\t\t<span class="pull-right row">\n' +
-                           '\t\t\t\t\t<span class="glyphicon glyphicon-screenshot"></span>\n' +
+                           // '\t\t\t\t\t<span class="glyphicon glyphicon-screenshot"></span>\n' +
                            '\t\t\t\t\t<span>' +questionnaire.followCount+'</span>\n' +
                            '\t\t\t</span>\n' +
                            '\t\t</div>\n' +
@@ -654,6 +608,18 @@
             })
         }
 
+        $(document).on("click","div[data-target=\"#showQuestion\"]",function(e){
+            var qId = $(this).attr("id").replace("Question-panel-","");
+            $.get("/questionnaire/getById",{qId:qId},function (res) {
+                if(res.code === 200){
+                    $("#showQuestion-title").html(res.data.title);
+                    $("#showQuestion-content").html(res.data.qhtml);
+                }else {
+                    alert("答疑问题模态框初始化失败!")
+                }
+            });
+        });
+
         function initAnswer(){
             $.get("/questionnaire/answer/list",{courseId:[[${course.id}]]},function (data) {
                 console.log(data.code);
@@ -661,29 +627,47 @@
                     $('#questionnaire-list').html("");
                     var html ='';
                     $.each(data.datas,function (key,questionnaire) {
-                        html +='<div class="panel panel-default">\n' +
+                        html +='<div class="panel panel-default" data-toggle="modal" data-target="#showAnswer" id="Answer-panel-'+ questionnaire.id +'">\n' +
                             '\t<div class="panel-body" style="padding-bottom:5px">\n' +
                             '\t\t<div class="pull-left"><h3 id="questionnaire-title-show" style="margin-top: 0px;">'+questionnaire.title+'</h3></div>\n' +
-                            '\t\t<span class="pull-left" style="clear: both !important">\n'
-                            + questionnaire.ahtml  +
+                            '\t\t<span class="pull-left hiddenSpan" style="clear: both !important">\n'
+                            + questionnaire.qhtml  +
                             '\t\t</span>\n' +
                             '\t\t<div class="row">\n' +
                             '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+new Date(questionnaire.createTime).Format("yyyy-MM-dd HH:mm")+'</span></div>\n' +
                             '\t\t\t<span class="pull-right row">\n' +
-                            '\t\t\t\t\t<span class="glyphicon glyphicon-screenshot"></span>\n' +
+                            // '\t\t\t\t\t<span class="glyphicon glyphicon-screenshot"></span>\n' +
                             '\t\t\t\t\t<span>' +questionnaire.followCount+'</span>\n' +
                             '\t\t\t</span>\n' +
                             '\t\t</div>\n' +
                             '\t</div>\n' +
                             '</div>';
-                        $('#questionnaire-list').append(html);
                     })
+                    $('#questionnaire-list').append(html);
                 } else {
                     alert("获取答疑请求失败！");
                 }
             })
         }
-        
+
+        $(document).on("click","div[data-target=\"#showAnswer\"]",function(){
+            var qId = $(this).attr("id").replace("Answer-panel-","");
+
+            $.get("/questionnaire/getById",{qId:qId},function (res) {
+                if(res.code === 200){
+                    $("#showAnswer-title").html(res.data.title);
+                    $("#showAnswer-content").html(
+                        '<p style=\"text-align:center;\">答疑问题描述</p>'
+                        + res.data.qhtml
+                        + '<p style=\"text-align:center;\">问题解答</p>'
+                        + res.data.ahtml
+                        );
+                }else {
+                    alert("答疑解答模态框初始化失败!")
+                }
+            });
+        });
+
         function accessStudy(courseId,sectionId) {
             window.location.href="/course/study?courseId="+courseId+"&sectionId="+sectionId+"&userId="+localStorage.getItem("userId");
         }

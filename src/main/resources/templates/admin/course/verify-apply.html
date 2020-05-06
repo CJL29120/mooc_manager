@@ -31,9 +31,6 @@
                         <div class="layui-input-inline">
                             <input type="text" id="C_name"  name="name" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
-                        <div class="layui-form-mid layui-word-aux">
-                            <span class="x-red">*</span>这是课程搜索功能的关键字
-                        </div>
                     </div>
 
                     <div class="layui-form-item">
@@ -42,9 +39,6 @@
                         </label>
                         <div class="layui-input-inline">
                             <input type="text" id="C_shortIntro"  name="shortIntro" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">
-                            <span class="x-red">*</span>课程简单描述：类型、适合人群、课程内容描述
                         </div>
                     </div>
 
@@ -106,8 +100,7 @@
 
         //监听提交
         form.on('submit(add)', function(data){
-            console.log(data.field);
-            console.log(data.field.type);
+            data.field.creatorId = localStorage.getItem("userId");
             $.ajax({
                 url:"/verify/add",
                 type:"POST",

@@ -13,7 +13,7 @@
     <body class="index">
         <!-- 顶部开始 -->
         <div class="container">
-            <div class="logo"> <a href="index.html">Friday v0.5</a></div>
+            <div class="logo"> <a href="index.html">后台管理</a></div>
             <div class="left_open">  <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a> </div>
             <ul class="layui-nav left fast-add" lay-filter="" sec:authorize="hasRole('ROLE_admin')">
                 <li class="layui-nav-item">
@@ -120,12 +120,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('章节列表 ',' /api/getPage?pageName=admin/section/section-list ')">
-                                    <i class="iconfont"></i>
-                                    <cite>章节列表</cite>
-                                </a>
-                            </li>
-                            <li>
                                 <a onclick="xadmin.add_tab('上传文件 ',' /api/getPage?pageName=admin/upload ')">
                                     <i class="iconfont"></i>
                                     <cite>upload</cite>
@@ -133,6 +127,11 @@
                             </li>
                         </ul>
                     </li>
+                    <li sec:authorize="hasRole('ROLE_teacher')">
+                        <a class="active" onclick="xadmin.add_tab('答疑管理 ',' /api/getPage?pageName=admin/questionnaire/questionnaire-list ')">
+                            <i class="iconfont"></i>
+                            <cite>答疑管理</cite>
+                        </a>
                 </ul>
             </div>
         </div>

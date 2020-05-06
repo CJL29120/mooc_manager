@@ -7,6 +7,7 @@ import com.chen.mooc_manager.service.LikeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * <p>
@@ -27,6 +28,7 @@ public class LikeServiceImpl extends ServiceImpl<LikeDao, Lice> implements LikeS
         Lice like = new Lice();
         like.setCommentId(commentId);
         like.setUserId(userId);
+        like.setCreateTime(new Date());
         return likeDao.insert(like) == 1;
     }
 }

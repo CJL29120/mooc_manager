@@ -84,7 +84,7 @@
      <script type="text/javascript" src="/js/upload-js/imageUpload.js"></script>
      <script type="text/javascript" src="/js/upload-js/videoUpload.js"></script>
      <script>
-
+        var courseId = [[${courseId}]];
       layui.use(['form','layer', 'laydate'], function(){
 
           var form = layui.form
@@ -119,6 +119,7 @@
             form.on('submit(add)', function(data){
                 data.field.coverUrl = imageUrl;
                 data.field.videoUrl = videoUrl;
+                data.field.courseId = courseId;
                 $.ajax({
                     url:"/section/add",
                     type:"POST",

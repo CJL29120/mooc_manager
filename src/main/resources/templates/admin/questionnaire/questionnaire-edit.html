@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>创建课程信息</title>
+    <header th:replace="/admin/header::html"></header>
+    <link rel="stylesheet" href="/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="/libs/wangEditor/wangEditor.js"></script>
+
+  </head>
+  
+  <body>
+     <div class="x-body">
+         <div class="layui-tab">
+             <ul class="layui-tab-title">
+                 <li>答疑问题</li>
+                 <li>编写解答</li>
+             </ul>
+             <div class="layui-tab-content">
+                 <div class="layui-tab-item layui-show">
+                     <span>
+                         问题标题
+                     </span>
+                     <h3 style="font-weight: bold;"><div id="questionnaire-title"></div></h3>
+
+                     <span>
+                         问题描述
+                     </span>
+
+                     <div id="questionnaire-qhtml" style="padding:30px 15px;font-size:16px">
+                     </div>
+                     </form>
+                 </div>
+
+                 <div class="layui-tab-item">
+                     <div id="editor"></div>
+                     <button class="submit-question btn btn-primary pull-right" onclick="editQuestionnaire()" style="margin-top: 17px;">保存</button>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+     <script>
+         var E = window.wangEditor;
+         var editor = new E("#editor");
+         editor.create();
+
+         initQuestion();
+
+         function initQuestion(){
+             $.get("/questionnaire/getById",{qId:'[[${qId}]]'},function (res) {
+                 if(res.code === 200){
+                     $("#questionnaire-title").html(res.data.title);
+                     $("#questionnaire-qhtml").html(res.data.qhtml);
+                 }else {
+                     alert("请求失败！");
+                 }
+             });
+         }
+
+         function editQuestionnaire(){
+             var ahtml = editor.txt.html();
+             $.post("/questionnaire/edit",{qId:'[[${qId}]]',ahtml:ahtml},
+                 function (data) {
+                     if (data.code === 200) {
+                         console.log("请求发送成功！");
+                         xadmin.close();
+                         xadmin.father_reload();
+                     } else {
+                         alert("请求失败！");
+                     }
+                 }
+             )
+         }
+
+     </script>
+  </body>
+</html>

@@ -26,7 +26,7 @@ public class Section{
     private Integer id;
     private Integer courseId;
     private String name;
-    private Integer sectionId;
+    private Integer sort;
     private Integer duration;
     private String coverUrl;
     private String videoUrl;

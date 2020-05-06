@@ -41,8 +41,6 @@ public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements
     @Resource
     SectionDao sectionDao;
 
-    @Resource
-    TeacherDao teacherDao;
 
     @Resource
     StudyDao studyDao;
@@ -131,6 +129,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseDao, Course> implements
         study.setUserId(userId);
         study.setCreateTime(new Date());
         return studyDao.insert(study) == 1;
+    }
+
+    @Override
+    public Integer getCountById(Integer creatorId) {
+        return courseDao.getCountById(creatorId);
+    }
+
+    @Override
+    public List<Course> getCoursePageById(Integer offset, Integer limit, Integer creatorId) {
+        return courseDao.getCoursePageById(offset,limit,creatorId);
     }
 
 }

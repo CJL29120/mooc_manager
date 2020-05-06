@@ -37,4 +37,8 @@ public interface CourseService extends IService<Course> {
     CourseShowDTO getShowDetail(Integer courseId) throws RuntimeException;
 
     boolean recordStudy(Integer courseId,Integer sectionId,Integer userId);
+
+    Integer getCountById(Integer creatorId);
+
+    List<Course> getCoursePageById(Integer offset, Integer limit, Integer creatorId);
 }

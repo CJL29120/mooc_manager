@@ -34,16 +34,24 @@ public class SectionController {
     @Autowired
     SectionService sectionService;
 
-    @GetMapping("/list")
-    @ResponseBody
-    public Results<Section> list(PageTableRequest request){
-        Assert.notNull(request, "请求显示的页码参数为空");
-        List<Section> sections =  sectionService.getAllSectionsByPage(request.getOffset(),request.getLimit());
-        return Results.success(sectionService.count(),sections);
+    @GetMapping("/listPage")
+    public String listPage(Model model,@RequestParam("courseId")Integer courseId){
+        model.addAttribute("courseId",courseId);
+        return "admin/section/section-list";
     }
 
+    @GetMapping("/getSectionPageById")
+    @ResponseBody
+    public Results<Section> getSectionPageById(PageTableRequest request,@RequestParam("courseId")Integer courseId){
+        Assert.notNull(request, "请求显示的页码参数为空");
+        List<Section> sections =  sectionService.getSectionPageById(request.getOffset(),request.getLimit(),courseId);
+        return Results.success(sectionService.getCountById(courseId),sections);
+    }
+
+
     @GetMapping("/addPage")
-    public String addPage(){
+    public String addPage(Model model,@RequestParam("courseId")Integer courseId){
+        model.addAttribute("courseId",courseId);
         return "admin/section/section-add";
     }
 

@@ -25,7 +25,6 @@ public class Questionnaire{
     private Integer weight;
     private Boolean solved;
     private Date createTime;
-    private Date updateTime;
     private Boolean deleted;
 
 }

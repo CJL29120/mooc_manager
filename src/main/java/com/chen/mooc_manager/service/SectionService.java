@@ -16,9 +16,11 @@ import java.util.List;
  */
 public interface SectionService extends IService<Section> {
 
-    List<Section> getAllSectionsByPage(Integer startPosition, Integer limit);
-
     boolean add(Section section);
 
     boolean edit(Section section);
+
+    Integer getCountById(Integer courseId);
+
+    List<Section> getSectionPageById(Integer offset, Integer limit, Integer courseId);
 }

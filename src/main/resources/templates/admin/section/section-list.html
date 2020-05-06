@@ -19,7 +19,7 @@
             <a href="">首页</a>
             <a href="">章节管理</a>
             <a>
-                <cite>章节列表</cite></a>
+                <cite id="breadcrumb-name">章节列表</cite></a>
           </span>
             <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
                 <i class="layui-icon" style="line-height:30px">ဂ</i></a>
@@ -58,9 +58,12 @@
     <script>
         layui.use(['table'], function(){
             var table = layui.table;
+
+
             table.render({
                 elem: '#table'
-                ,url: '/section/list' //数据接口
+                ,url: '/section/getSectionPageById' //数据接口
+                ,where:{courseId:[[${courseId}]]}
                 ,page: true //开启分页
                 ,toolbar: '#toolbarDemo'
                 ,response: {
@@ -70,17 +73,17 @@
                 ,cols: [
                     [ //表头
                         {type: 'checkbox' ,width:80 ,align:'center'}
-                        ,{field: 'sectionId', title: '章节ID', width: 100}
-                        ,{field: 'name', title: '章节名'   ,width: 100}
+                        ,{field: 'sort', title: '序号', width: 30}
+                        ,{field: 'name', title: '章节名'   ,width: 170}
                         ,{field: 'coverUrl',  title: '封面' , templet:'<div style=""><img width="260" src="{{d.coverUrl}}"></div>',width:160}
-                        ,{field: 'videoUrl', title: '视频链接'  ,templet:function(d){return  d.videoUrl == '' ?
+                        ,{field: 'videoUrl', title: '视频链接' ,width:280 ,templet:function(d){return  d.videoUrl == '' ?
                             '<div><video hidden="true"></video></div>'
                             :
                             '<div> <video controls="controls" style="margin-top: 10px;max-width: 260px;width: 100%;" ><source src="'
                             + d.videoUrl + '" type="video/mp4"> </video></div>'
                         }}
                         ,{field: 'uploadTime', title: '上传时间',templet : "<div>{{layui.util.toDateString(d.uploadTime, 'yyyy年MM月dd日 HH:mm')}}</div>" ,width: 112}
-                        ,{title: '操作', fixed: 'right', width: 180, align:'center', toolbar: '#barDemo'}
+                        ,{title: '操作', width: 180, align:'center', toolbar: '#barDemo'}
                     ]
                 ]
             });
@@ -99,7 +102,7 @@
                 console.log(data);
                 switch(obj.event){
                     case 'add':
-                        xadmin.open("增加章节","/section/addPage");
+                        xadmin.open("增加章节","/section/addPage?courseId="+[[${courseId}]]);
                         break;
                     case 'update':
                         if(data.length === 0){

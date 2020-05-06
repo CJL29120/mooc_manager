@@ -69,10 +69,10 @@
                         class="video-js"
                         controls
                         preload="auto"
-                        poster="../img/ncn1.jpg"
                         width="780"
                         height="400"
-                        data-setup='{}'>
+                        data-setup='{}'
+                        data-th-poster="${section.coverUrl}">
                         <source data-th-src="${section.videoUrl}" type="video/mp4">
                         <source data-th-src="${section.videoUrl}" type="video/webm">
                         <source data-th-src="${section.videoUrl}" type="video/ogg">
@@ -199,64 +199,6 @@
     <script type="text/javascript" src="/js/dest/frontend/index.js?=2016121272249"></script>
 
     <script>
-        refresh();
-
-        function refresh(data){
-            $.get("/comment/sectionComment",{sectionId:"2"},function (data) {
-                if(data.code==200){
-                    initComment(data.datas);
-                }else {
-
-                }
-            });
-
-            $.get("/comment/like",{},function(data){
-               if(data.code == 200){
-                   $.each(data.datas,function (key,like) {
-                       var commentId = like.commentId;
-                       $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
-                   })
-               }
-            });
-        }
-
-        $("#section-submit").click(function (){
-            $.post("/comment/addSectionComment",{sectionId:[[${section.id}]],content:$("#section-comment").val(),userId:2},function (data) {
-                if(data.code==200){
-                    refresh();
-                    console.log("成功发表评论！")
-                }else {
-
-                }
-            });
-        });
-
-        $(document).on("click","button[id^=reply-submit]",function(e){
-            var commentId = e.target.id.replace("reply-submit","");
-            var content = $('#comment-content'+commentId).val();
-            console.log(content);
-            $.post("/comment/addReplyComment",{commentId:commentId,content:content,userId:2,avatarUrl:"../img/ncn1.jpg"},function (data) {
-                if(data.code==200){
-                    refresh();
-                }else {
-
-                }
-            });
-        });
-
-        $(document).on("click","p[id^=like]",function(e){
-            var commentId = e.target.id.replace("like","");
-            var content = $('#comment-content'+commentId).val();
-            console.log(content);
-            $.post("/comment/like",{commentId:commentId,userId:2},function (data) {
-                if(data.code==200){
-                    $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
-                }else {
-
-                }
-            });
-        });
-
         Date.prototype.Format = function (fmt) {
             var o = {
                 "M+": this.getMonth() + 1, // 月份
@@ -273,6 +215,64 @@
             return fmt;
         }
 
+        refresh();
+
+        function refresh(){
+            $.get("/comment/sectionComment",{sectionId:[[${section.id}]]},function (data) {
+                if(data.code===200){
+                    initComment(data.datas);
+                }else {
+                    alert("评论初始化失败！")
+                }
+            });
+
+            $.get("/comment/like",{},function(data){
+               if(data.code === 200){
+                   $.each(data.datas,function (key,like) {
+                       var commentId = like.commentId;
+                       $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                   })
+               }else {
+                   alert("点赞初始化失败！")
+               }
+            });
+        }
+
+        $("#section-submit").click(function (){
+            $.post("/comment/addSectionComment",{sectionId:[[${section.id}]],content:$("#section-comment").val(),userId:localStorage.getItem("userId")},function (data) {
+                if(data.code===200){
+                    refresh();
+                    console.log("成功！")
+                }else {
+                    alert("发表评论失败！")
+                }
+            });
+        });
+
+        $(document).on("click","button[id^=reply-submit]",function(e){
+            var commentId = e.target.id.replace("reply-submit","");
+            var content = $('#comment-content'+commentId).val();
+            $.post("/comment/addReplyComment",{commentId:commentId,content:content,userId:localStorage.getItem("userId"),avatarUrl:"../img/ncn1.jpg"},function (data) {
+                if(data.code===200){
+                    refresh();
+                }else {
+                    alert("发表评论失败！")
+                }
+            });
+        });
+
+        $(document).on("click","p[id^=like]",function(e){
+            var commentId = e.target.id.replace("like","");
+            var content = $('#comment-content'+commentId).val();
+            $.post("/comment/like",{commentId:commentId,userId:localStorage.getItem("userId")},function (data) {
+                if(data.code===200){
+                    $("#like"+commentId).attr("class","glyphicon glyphicon-heart");
+                }else {
+                    alert("点赞失败！")
+                }
+            });
+        });
+
         function initComment(commentDTOs){
             $("#accordion").html("");
             var html ='';
@@ -282,7 +282,7 @@
                     '\t\t<div class="pull-left circle-avatar" style="background-image:url('+ commentDTO.avatarUrl +')"></div>\n' +
                     '\t\t<div class="pull-left" style="clear: both !important"><span>'+  commentDTO.content  +'</span></div>\n' +
                     '\t\t<div class="row">\n' +
-                    '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(commentDTO.createTime).Format("yyyy-MM-dd") +'</span></div>\n' +
+                    '\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(commentDTO.createTime).Format("yyyy-MM-dd HH:mm") +'</span></div>\n' +
                     '\t\t\t<span class="pull-right">\n' +
                     '\t\t\t\t<p class="glyphicon glyphicon-heart-empty"  id="like'+ commentDTO.id +'"></p>\n' +
                     '\t\t\t\t<span  class="glyphicon glyphicon-pencil" data-toggle="collapse" href="#collapse'+ commentDTO.id +'" data-parent="#accordion"></span>\n' +
@@ -306,7 +306,7 @@
                         '\t\t\t<div class="pull-left circle-avatar" style="background-image:url('+ comment.avatarUrl +')"></div>\n' +
                         '\t\t\t<span class="pull-left" style="clear: both !important">'+ comment.content +'</span>\n' +
                         '\t\t\t<div class="row">\n' +
-                        '\t\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(comment.createTime).Format("yyyy-MM-dd") +'</span></div>\n' +
+                        '\t\t\t\t<div class="pull-left" style="clear: both !important"><span>'+ new Date(comment.createTime).Format("yyyy-MM-dd  HH:mm") +'</span></div>\n' +
                         '\t\t\t\t<span class="pull-right">\n' +
                         '\t\t\t\t\t<p class="glyphicon glyphicon-heart-empty" id="like'+ comment.id +'"></p>\n' +
                         '\t\t\t\t</span>\n' +
